@@ -3,9 +3,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
 }
 
 .dashboard-container.corruption-active {
@@ -37,44 +35,10 @@
     radial-gradient(rgba(255, 0, 255, 0.05) 1px, transparent 1px);
   background-size: 50px 50px;
   background-position: 0 0, 25px 25px;
-  border: 2px solid #00f0ff;
   border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.5), 
-              inset 0 0 15px rgba(0, 240, 255, 0.3);
   padding: 2rem;
   position: relative;
   overflow: hidden;
-}
-
-.dashboard::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #ff00ff, transparent);
-  animation: scanline 5s linear infinite;
-}
-
-.dashboard::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #00f0ff, transparent);
-  animation: scanline 7s linear infinite reverse;
-}
-
-@keyframes scanline {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
 }
 
 .metrics-container {
@@ -133,10 +97,6 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .dashboard-container {
-    padding: 1rem;
-  }
-  
   .dashboard {
     padding: 1rem;
   }
