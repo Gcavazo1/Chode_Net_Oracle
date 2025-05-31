@@ -1,22 +1,27 @@
 import React from 'react';
+import { type StabilityStatus } from '../Dashboard/Dashboard';
 import './DeveloperPanel.css';
 
 interface DeveloperPanelProps {
   girthResonance: number;
   tapSurgeIndex: number;
   legionMorale: number;
+  stabilityStatus: StabilityStatus;
   onGirthChange: (value: number) => void;
   onTapSurgeChange: (value: number) => void;
   onMoraleChange: (value: number) => void;
+  onStabilityChange: (value: StabilityStatus) => void;
 }
 
 export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
   girthResonance,
   tapSurgeIndex,
   legionMorale,
+  stabilityStatus,
   onGirthChange,
   onTapSurgeChange,
-  onMoraleChange
+  onMoraleChange,
+  onStabilityChange
 }) => {
   return (
     <div className="dev-panel">
@@ -97,12 +102,40 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
             </div>
           </div>
         </div>
+
+        <div className="control-group">
+          <label>Oracle System Stability:</label>
+          <div className="button-group stability-buttons">
+            <button 
+              className={`stability-button ${stabilityStatus === 'STABLE' ? 'active' : ''}`}
+              onClick={() => onStabilityChange('STABLE')}
+              style={{ backgroundColor: stabilityStatus === 'STABLE' ? '#39ff14' : undefined }}
+            >
+              STABLE AS A CHODE STATUE
+            </button>
+            <button 
+              className={`stability-button ${stabilityStatus === 'UNSTABLE' ? 'active' : ''}`}
+              onClick={() => onStabilityChange('UNSTABLE')}
+              style={{ backgroundColor: stabilityStatus === 'UNSTABLE' ? '#ffff00' : undefined }}
+            >
+              SYSTEM UNSTABLE
+            </button>
+            <button 
+              className={`stability-button ${stabilityStatus === 'CRITICAL_CORRUPTION' ? 'active' : ''}`}
+              onClick={() => onStabilityChange('CRITICAL_CORRUPTION')}
+              style={{ backgroundColor: stabilityStatus === 'CRITICAL_CORRUPTION' ? '#ff3131' : undefined }}
+            >
+              CRITICAL CORRUPTION
+            </button>
+          </div>
+        </div>
         
         <div className="preset-buttons">
           <button onClick={() => {
             onGirthChange(10);
             onTapSurgeChange(0);
             onMoraleChange(15);
+            onStabilityChange('CRITICAL_CORRUPTION');
           }}>
             BEAR MARKET PANIC
           </button>
@@ -110,6 +143,7 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
             onGirthChange(50);
             onTapSurgeChange(1);
             onMoraleChange(55);
+            onStabilityChange('UNSTABLE');
           }}>
             STABLE ACCUMULATION
           </button>
@@ -117,6 +151,7 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
             onGirthChange(90);
             onTapSurgeChange(3);
             onMoraleChange(95);
+            onStabilityChange('STABLE');
           }}>
             MAXIMUM ENGORGEMENT
           </button>

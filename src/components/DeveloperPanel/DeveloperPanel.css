@@ -1,4 +1,3 @@
-/* DeveloperPanel.css */
 .dev-panel {
   width: 100%;
   margin-top: 2rem;
@@ -125,6 +124,33 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
+}
+
+.stability-buttons {
+  grid-template-columns: 1fr;
+}
+
+.stability-button {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 0.8rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.stability-button:hover {
+  background-color: #444;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.stability-button.active {
+  border-width: 2px;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
 }
 
 .button-group button {

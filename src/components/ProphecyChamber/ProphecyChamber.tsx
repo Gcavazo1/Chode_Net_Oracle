@@ -71,7 +71,7 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
     <div className="prophecy-chamber">
       <div className="prophecy-header">
         <Scroll className="scroll-icon" size={32} />
-        <h2>THE ORACLE HAS SPOKEN:</h2>
+        <h2>THE ORACLE SPEAKS:</h2>
         <Scroll className="scroll-icon" size={32} />
       </div>
 
