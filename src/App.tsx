@@ -5,6 +5,7 @@ import { ProphecyChamber } from './components/ProphecyChamber/ProphecyChamber';
 import { ApocryphalScrolls } from './components/ApocryphalScrolls/ApocryphalScrolls';
 import { RitualRequests } from './components/RitualRequests/RitualRequests';
 import { DeveloperPanel } from './components/DeveloperPanel/DeveloperPanel';
+import { setupGameEventListener } from './lib/gameEventHandler';
 import './App.css';
 
 export type StabilityStatus = 'STABLE' | 'UNSTABLE' | 'CRITICAL_CORRUPTION';
@@ -28,6 +29,12 @@ function App() {
   const [showDevPanel, setShowDevPanel] = useState(false);
   
   const gameIframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Set up game event listener
+  useEffect(() => {
+    const cleanup = setupGameEventListener();
+    return cleanup;
+  }, []);
 
   // Listen for messages from the game iframe
   useEffect(() => {
