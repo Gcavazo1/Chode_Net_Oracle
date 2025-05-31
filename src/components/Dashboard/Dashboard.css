@@ -8,6 +8,28 @@
   padding: 2rem;
 }
 
+.dashboard-container.corruption-active {
+  animation: corruption-flicker 0.1s infinite;
+}
+
+@keyframes corruption-flicker {
+  0% {
+    filter: none;
+  }
+  25% {
+    filter: hue-rotate(45deg) saturate(150%);
+  }
+  50% {
+    filter: hue-rotate(-45deg) saturate(200%);
+  }
+  75% {
+    filter: hue-rotate(90deg) saturate(150%);
+  }
+  100% {
+    filter: none;
+  }
+}
+
 .dashboard {
   background-color: #121212;
   background-image: 

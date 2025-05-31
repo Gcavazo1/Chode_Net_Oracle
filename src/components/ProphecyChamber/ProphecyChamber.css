@@ -38,6 +38,62 @@
   opacity: 0.5;
 }
 
+/* Corruption Effects */
+.prophecy-display.corruption-glitched .prophecy-text {
+  animation: glitch-text 0.2s infinite;
+  color: #00f0ff;
+}
+
+.prophecy-display.corruption-cryptic .prophecy-text {
+  font-family: 'Old English Text MT', 'Times New Roman', serif;
+  color: #8a2be2;
+  text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+  letter-spacing: 2px;
+}
+
+.prophecy-display.corruption-hostile_fragment .prophecy-text {
+  color: #ff3131;
+  animation: hostile-jitter 0.1s infinite;
+}
+
+@keyframes glitch-text {
+  0% {
+    transform: translate(0);
+    text-shadow: -2px 0 #ff00ff, 2px 0 #00f0ff;
+  }
+  25% {
+    transform: translate(-2px, 2px);
+    text-shadow: 2px 0 #ff00ff, -2px 0 #00f0ff;
+  }
+  50% {
+    transform: translate(2px, -2px);
+    text-shadow: -1px 0 #ff00ff, 1px 0 #00f0ff;
+  }
+  75% {
+    transform: translate(-1px, 1px);
+    text-shadow: 1px 0 #ff00ff, -1px 0 #00f0ff;
+  }
+  100% {
+    transform: translate(0);
+    text-shadow: -2px 0 #ff00ff, 2px 0 #00f0ff;
+  }
+}
+
+@keyframes hostile-jitter {
+  0%, 100% {
+    transform: translate(0);
+  }
+  25% {
+    transform: translate(-1px, 1px);
+  }
+  50% {
+    transform: translate(1px, -1px);
+  }
+  75% {
+    transform: translate(-1px, -1px);
+  }
+}
+
 @keyframes scan-lines {
   0% {
     transform: translateY(0);
