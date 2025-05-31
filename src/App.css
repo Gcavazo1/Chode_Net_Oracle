@@ -8,6 +8,7 @@ body {
   color: #ffffff;
   font-family: 'Share Tech Mono', monospace;
   overflow-x: hidden;
+  min-height: 100vh;
 }
 
 .app-container {
@@ -38,15 +39,6 @@ body {
   animation: rainbow-border 10s linear infinite;
 }
 
-@keyframes rainbow-border {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
-}
-
 .logo {
   display: flex;
   align-items: center;
@@ -60,50 +52,24 @@ body {
   letter-spacing: 2px;
 }
 
-.header-status {
-  background-color: #222;
+.dev-panel-toggle {
+  background: #222;
   color: #ff00ff;
+  border: 1px solid #ff00ff;
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  letter-spacing: 1px;
-  border: 1px solid #ff00ff;
-  box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
-  position: relative;
-  overflow: hidden;
+  cursor: pointer;
+  font-family: 'Share Tech Mono', monospace;
+  transition: all 0.3s ease;
 }
 
-.header-status::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 0, 255, 0.2),
-    transparent
-  );
-  animation: scan-effect 3s linear infinite;
-}
-
-@keyframes scan-effect {
-  0% {
-    left: -100%;
-  }
-  100% {
-    left: 100%;
-  }
+.dev-panel-toggle:hover {
+  background: #333;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
 }
 
 .app-main {
   flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   padding: 2rem;
   background-color: #0a0a0a;
   background-image: 
@@ -111,6 +77,71 @@ body {
     radial-gradient(rgba(255, 0, 255, 0.03) 1px, transparent 1px);
   background-size: 30px 30px;
   background-position: 0 0, 15px 15px;
+}
+
+.oracle-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.top-panel {
+  background: rgba(18, 18, 18, 0.95);
+  border: 2px solid #00f0ff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.panel-controls {
+  display: flex;
+  gap: 1px;
+  background: #000;
+  padding: 1px;
+}
+
+.panel-controls button {
+  flex: 1;
+  padding: 1rem;
+  background: #222;
+  border: none;
+  color: #fff;
+  font-family: 'Share Tech Mono', monospace;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.panel-controls button:hover {
+  background: #333;
+}
+
+.panel-controls button.active {
+  background: #00f0ff;
+  color: #000;
+}
+
+.game-container {
+  aspect-ratio: 16/9;
+  width: 100%;
+  background: #111;
+  border: 2px solid #ff00ff;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.game-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.bottom-panel {
+  background: rgba(18, 18, 18, 0.95);
+  border: 2px solid #00f0ff;
+  border-radius: 8px;
+  padding: 1.5rem;
 }
 
 .app-footer {
@@ -144,25 +175,37 @@ body {
   animation: blink 2s infinite;
 }
 
+@keyframes rainbow-border {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
 @keyframes blink {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
 }
 
 /* Responsive adjustments */
+@media (max-width: 1024px) {
+  .app-main {
+    padding: 1rem;
+  }
+  
+  .oracle-layout {
+    gap: 1rem;
+  }
+  
+  .panel-controls button {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
 @media (max-width: 768px) {
   .app-header {
     padding: 1rem;
     flex-direction: column;
     gap: 1rem;
-  }
-  
-  .app-main {
-    padding: 1rem;
   }
   
   .app-footer {
