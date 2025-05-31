@@ -1,7 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
-// These will be replaced with actual values
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'your-project-url';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
+if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+  throw new Error(
+    'Please connect to Supabase by clicking the "Connect to Supabase" button in the top right corner.'
+  );
+}
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
