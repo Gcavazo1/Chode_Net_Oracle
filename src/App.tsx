@@ -87,10 +87,6 @@ function App() {
             <div className="panel-content">
               {currentView === 'prophecy' && (
                 <ProphecyChamber 
-                  girthResonance={girthResonance}
-                  tapSurgeIndex={tapSurgeIndex}
-                  legionMorale={legionMorale}
-                  stabilityStatus={stabilityStatus}
                   currentTopic={currentTopic}
                   onProphecyReceived={() => setCurrentTopic(null)}
                 />
@@ -151,5 +147,3 @@ function App() {
     </div>
   );
 }
-
-export default App
