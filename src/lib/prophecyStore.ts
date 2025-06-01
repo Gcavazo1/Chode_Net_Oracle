@@ -18,6 +18,7 @@ interface ProphecyStore {
   setupRealtimeSubscription: () => Promise<void>;
   resetUnreadCount: () => void;
   incrementUnreadCount: () => void;
+  generateProphecy: (metrics: any, topic: string | null) => Promise<void>;
 }
 
 export const useProphecyStore = create<ProphecyStore>((set, get) => ({
@@ -57,7 +58,6 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
           (payload) => {
             const newProphecy = payload.new as Prophecy;
             
-            // Update state with new prophecy
             set((state) => ({
               prophecies: [newProphecy, ...state.prophecies],
               latestProphecy: newProphecy
@@ -86,6 +86,22 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
         error: error instanceof Error ? error.message : 'Unknown error',
         isLoading: false 
       });
+    }
+  },
+
+  generateProphecy: async (metrics, topic) => {
+    try {
+      const { error } = await supabase.functions.invoke('oracle-prophecy-generator', {
+        body: {
+          metrics,
+          ritual_request_topic: topic
+        }
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Failed to generate prophecy:', error);
+      throw error;
     }
   },
 
