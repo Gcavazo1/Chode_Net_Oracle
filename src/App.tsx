@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Monitor } from 'lucide-react';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProphecyChamber } from './components/ProphecyChamber/ProphecyChamber';
@@ -7,29 +7,24 @@ import { RitualRequests } from './components/RitualRequests/RitualRequests';
 import { DeveloperPanel } from './components/DeveloperPanel/DeveloperPanel';
 import { DebugPanel } from './components/DebugPanel/DebugPanel';
 import { setupGameEventListener } from './lib/gameEventHandler';
+import { useGirthIndexStore } from './lib/girthIndexStore';
 import './App.css';
-
-export type StabilityStatus = 'STABLE' | 'UNSTABLE' | 'CRITICAL_CORRUPTION';
-
-type GameMessage = {
-  action: 'show_oracle_prophecy' | 'show_oracle_scrolls' | 'show_ritual_requests';
-};
-
-type UnreadCountMessage = {
-  event: 'oracle_update_unread_count';
-  count: number;
-};
 
 function App() {
   const [currentView, setCurrentView] = useState<'prophecy' | 'scrolls' | 'ritual'>('prophecy');
-  const [girthResonance, setGirthResonance] = useState(42);
-  const [tapSurgeIndex, setTapSurgeIndex] = useState(1);
-  const [legionMorale, setLegionMorale] = useState(65);
-  const [stabilityStatus, setStabilityStatus] = useState<StabilityStatus>('STABLE');
   const [currentTopic, setCurrentTopic] = useState<string | null>(null);
   const [showDevPanel, setShowDevPanel] = useState(false);
   
-  const gameIframeRef = useRef<HTMLIFrameElement>(null);
+  const {
+    girthResonance,
+    tapSurgeIndex,
+    legionMorale,
+    stabilityStatus,
+    isLoading,
+    error,
+    setupRealtimeSubscription,
+    updateMetrics
+  } = useGirthIndexStore();
 
   // Set up game event listener
   useEffect(() => {
@@ -37,41 +32,18 @@ function App() {
     return cleanup;
   }, []);
 
-  // Listen for messages from the game iframe
+  // Set up Supabase realtime subscription
   useEffect(() => {
-    const handleGameMessage = (event: MessageEvent) => {
-      // Validate message origin if needed
-      // if (event.origin !== "expected-origin") return;
-      
-      const message = event.data as GameMessage;
-      
-      switch (message.action) {
-        case 'show_oracle_prophecy':
-          setCurrentView('prophecy');
-          break;
-        case 'show_oracle_scrolls':
-          setCurrentView('scrolls');
-          break;
-        case 'show_ritual_requests':
-          setCurrentView('ritual');
-          break;
-      }
-    };
+    setupRealtimeSubscription();
+  }, [setupRealtimeSubscription]);
 
-    window.addEventListener('message', handleGameMessage);
-    return () => window.removeEventListener('message', handleGameMessage);
-  }, []);
+  if (isLoading) {
+    return <div className="loading">Loading Girth Index...</div>;
+  }
 
-  // Function to update unread counter in game
-  const updateGameUnreadCounter = (count: number) => {
-    if (gameIframeRef.current?.contentWindow) {
-      const message: UnreadCountMessage = {
-        event: 'oracle_update_unread_count',
-        count: count
-      };
-      gameIframeRef.current.contentWindow.postMessage(message, '*');
-    }
-  };
+  if (error) {
+    return <div className="error">Error: {error}</div>;
+  }
 
   return (
     <div className="app-container">
@@ -120,11 +92,7 @@ function App() {
                   legionMorale={legionMorale}
                   stabilityStatus={stabilityStatus}
                   currentTopic={currentTopic}
-                  onProphecyReceived={() => {
-                    setCurrentTopic(null);
-                    // Increment unread counter when new prophecy is received
-                    updateGameUnreadCounter(1);
-                  }}
+                  onProphecyReceived={() => setCurrentTopic(null)}
                 />
               )}
               {currentView === 'scrolls' && <ApocryphalScrolls />}
@@ -139,8 +107,7 @@ function App() {
 
           <section className="game-container">
             <iframe 
-              ref={gameIframeRef}
-              src="about:blank" // Replace with actual game URL
+              src="about:blank"
               title="CHODE Tapper Game"
               className="game-frame"
             />
@@ -162,10 +129,10 @@ function App() {
             tapSurgeIndex={tapSurgeIndex}
             legionMorale={legionMorale}
             stabilityStatus={stabilityStatus}
-            onGirthChange={setGirthResonance}
-            onTapSurgeChange={setTapSurgeIndex}
-            onMoraleChange={setLegionMorale}
-            onStabilityChange={setStabilityStatus}
+            onGirthChange={(value) => updateMetrics({ girthResonance: value })}
+            onTapSurgeChange={(value) => updateMetrics({ tapSurgeIndex: value })}
+            onMoraleChange={(value) => updateMetrics({ legionMorale: value })}
+            onStabilityChange={(value) => updateMetrics({ stabilityStatus: value })}
           />
         )}
       </main>
@@ -184,5 +151,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
