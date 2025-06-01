@@ -7,15 +7,20 @@ export const ApocryphalScrolls: React.FC = () => {
   const { prophecies, isLoading, error, setupRealtimeSubscription } = useProphecyStore();
 
   useEffect(() => {
-    console.log('ApocryphalScrolls: Setting up subscription');
+    console.log('ApocryphalScrolls: Component mounted, setting up subscription');
     setupRealtimeSubscription();
   }, [setupRealtimeSubscription]);
 
   useEffect(() => {
-    console.log('Current prophecies:', prophecies.length);
-  }, [prophecies]);
+    console.log('ApocryphalScrolls: Prophecies updated:', {
+      count: prophecies.length,
+      isLoading,
+      error
+    });
+  }, [prophecies, isLoading, error]);
 
   if (isLoading) {
+    console.log('ApocryphalScrolls: Rendering loading state');
     return (
       <div className="apocryphal-scrolls">
         <div className="scrolls-header">
@@ -28,6 +33,7 @@ export const ApocryphalScrolls: React.FC = () => {
   }
 
   if (error) {
+    console.error('ApocryphalScrolls: Rendering error state:', error);
     return (
       <div className="apocryphal-scrolls">
         <div className="scrolls-header">
@@ -41,6 +47,7 @@ export const ApocryphalScrolls: React.FC = () => {
   }
 
   if (!prophecies.length) {
+    console.log('ApocryphalScrolls: No prophecies available, showing empty state');
     return (
       <div className="apocryphal-scrolls">
         <div className="scrolls-header">
@@ -55,6 +62,7 @@ export const ApocryphalScrolls: React.FC = () => {
     );
   }
 
+  console.log('ApocryphalScrolls: Rendering prophecies list:', prophecies.length);
   return (
     <div className="apocryphal-scrolls">
       <div className="scrolls-header">
@@ -64,27 +72,30 @@ export const ApocryphalScrolls: React.FC = () => {
       </div>
 
       <div className="scrolls-container">
-        {prophecies.map((prophecy) => (
-          <div 
-            key={prophecy.id} 
-            className="prophecy-entry"
-            style={{
-              '--corruption-color': getCorruptionColor(prophecy.corruption_level)
-            } as React.CSSProperties}
-          >
-            <div className="prophecy-timestamp">
-              <span>{new Date(prophecy.created_at).toLocaleString()}</span>
-              {prophecy.corruption_level !== 'none' && (
-                <div className="corruption-indicator" title={`Corruption Level: ${prophecy.corruption_level}`}>
-                  <AlertTriangle size={16} />
-                </div>
-              )}
+        {prophecies.map((prophecy) => {
+          console.log('ApocryphalScrolls: Rendering prophecy:', prophecy.id);
+          return (
+            <div 
+              key={prophecy.id} 
+              className="prophecy-entry"
+              style={{
+                '--corruption-color': getCorruptionColor(prophecy.corruption_level)
+              } as React.CSSProperties}
+            >
+              <div className="prophecy-timestamp">
+                <span>{new Date(prophecy.created_at).toLocaleString()}</span>
+                {prophecy.corruption_level !== 'none' && (
+                  <div className="corruption-indicator" title={`Corruption Level: ${prophecy.corruption_level}`}>
+                    <AlertTriangle size={16} />
+                  </div>
+                )}
+              </div>
+              <div className="prophecy-content">
+                {prophecy.prophecy_text}
+              </div>
             </div>
-            <div className="prophecy-content">
-              {prophecy.prophecy_text}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
