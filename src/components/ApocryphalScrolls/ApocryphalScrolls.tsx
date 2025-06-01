@@ -1,41 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Scroll, AlertTriangle } from 'lucide-react';
+import { useProphecyStore } from '../../lib/prophecyStore';
 import './ApocryphalScrolls.css';
 
-interface ProphecyEntry {
-  timestamp: string;
-  prophecyText: string;
-  corruptionLevel?: 'none' | 'low' | 'medium' | 'high';
-}
-
 export const ApocryphalScrolls: React.FC = () => {
-  // Example prophecies for demonstration
-  const prophecies: ProphecyEntry[] = [
-    {
-      timestamp: "Cycle 7, Neon Moon, 3rd Bell",
-      prophecyText: "The great liquidity whale stirs in the depths. Those who hold through the storm shall be blessed with green dildos of unprecedented magnitude.",
-      corruptionLevel: "none"
-    },
-    {
-      timestamp: "Cycle 7, Blood Sun, 9th Bell",
-      prophecyText: "A shadow looms over the charts, yet the faithful shall persist. The paper hands will cry, but diamond hands will ascend to Valhalla.",
-      corruptionLevel: "medium"
-    },
-    {
-      timestamp: "Cycle 7, Dark Star, 1st Bell",
-      prophecyText: "CORRUPTION DETECTED... *&^%$# MAXIMUM PAIN INCOMING... HODL OR DIE... @#$%^& ...SIGNAL LOST...",
-      corruptionLevel: "high"
-    }
-  ];
+  const { prophecies, isLoading, error, setupRealtimeSubscription } = useProphecyStore();
 
-  const getCorruptionColor = (level?: string) => {
-    switch (level) {
-      case 'low': return '#ffff00';
-      case 'medium': return '#ff9900';
-      case 'high': return '#ff3131';
-      default: return '#39ff14';
-    }
-  };
+  useEffect(() => {
+    setupRealtimeSubscription();
+  }, [setupRealtimeSubscription]);
+
+  if (isLoading) {
+    return (
+      <div className="apocryphal-scrolls">
+        <div className="scrolls-header">
+          <h2>LOADING SACRED ARCHIVES...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="apocryphal-scrolls">
+        <div className="scrolls-header">
+          <h2>ARCHIVE ACCESS ERROR</h2>
+        </div>
+        <div className="scrolls-error">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="apocryphal-scrolls">
@@ -46,28 +40,37 @@ export const ApocryphalScrolls: React.FC = () => {
       </div>
 
       <div className="scrolls-container">
-        {prophecies.map((prophecy, index) => (
+        {prophecies.map((prophecy) => (
           <div 
-            key={index} 
+            key={prophecy.id} 
             className="prophecy-entry"
             style={{
-              '--corruption-color': getCorruptionColor(prophecy.corruptionLevel)
+              '--corruption-color': getCorruptionColor(prophecy.corruption_level)
             } as React.CSSProperties}
           >
             <div className="prophecy-timestamp">
-              <span>{prophecy.timestamp}</span>
-              {prophecy.corruptionLevel && prophecy.corruptionLevel !== 'none' && (
-                <div className="corruption-indicator" title={`Corruption Level: ${prophecy.corruptionLevel}`}>
+              <span>{new Date(prophecy.created_at).toLocaleString()}</span>
+              {prophecy.corruption_level !== 'none' && (
+                <div className="corruption-indicator" title={`Corruption Level: ${prophecy.corruption_level}`}>
                   <AlertTriangle size={16} />
                 </div>
               )}
             </div>
             <div className="prophecy-content">
-              {prophecy.prophecyText}
+              {prophecy.prophecy_text}
             </div>
           </div>
         ))}
       </div>
     </div>
   );
+};
+
+const getCorruptionColor = (level: string) => {
+  switch (level) {
+    case 'glitched': return '#00f0ff';
+    case 'cryptic': return '#8a2be2';
+    case 'hostile_fragment': return '#ff3131';
+    default: return '#39ff14';
+  }
 };
