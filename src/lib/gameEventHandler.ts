@@ -21,7 +21,12 @@ async function forwardEventToSupabase(gameEventData: GameEvent): Promise<void> {
       timestamp_utc: gameEventData.timestamp_utc || new Date().toISOString()
     };
 
-    const { error } = await supabase.functions.invoke('ingest-chode-event', {
+    console.log('Oracle Page: Forwarding to Supabase ingest-chode-event:', {
+      url: 'https://errgidlsmozmfnsoyxvw.supabase.co/functions/v1/ingest-chode-event',
+      payload: eventWithTimestamp
+    });
+
+    const { data, error } = await supabase.functions.invoke('ingest-chode-event', {
       body: eventWithTimestamp
     });
 
@@ -35,7 +40,7 @@ async function forwardEventToSupabase(gameEventData: GameEvent): Promise<void> {
       return;
     }
 
-    console.log('Oracle Page: Event successfully forwarded to Supabase:', gameEventData.event_type);
+    console.info('Oracle Page: Event successfully forwarded to Supabase. Response:', data);
     addEventLog({
       type: 'forward',
       eventType: gameEventData.event_type,
@@ -73,6 +78,8 @@ function isValidGameEvent(data: unknown): data is GameEvent {
 export function receiveGameEvent(event: MessageEvent): void {
   const addEventLog = useDebugStore.getState().addEventLog;
 
+  console.log('Oracle Page: Raw message received from iframe:', event.data, 'from origin:', event.origin);
+
   // Whitelist of allowed origins
   const ALLOWED_ORIGINS = [
     'http://localhost:5173',  // Local development
@@ -95,8 +102,9 @@ export function receiveGameEvent(event: MessageEvent): void {
   let parsedData: unknown;
   try {
     parsedData = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+    console.log('Oracle Page: Parsed game event:', parsedData);
   } catch (error) {
-    console.error('Oracle Page: Failed to parse game event:', error);
+    console.error('Oracle Page: Failed to parse game event JSON:', error, 'Raw data:', event.data);
     addEventLog({
       type: 'error',
       eventType: 'unknown',
@@ -107,7 +115,7 @@ export function receiveGameEvent(event: MessageEvent): void {
 
   // Validate event structure
   if (!isValidGameEvent(parsedData)) {
-    console.warn('Oracle Page: Invalid game event structure:', parsedData);
+    console.warn('Oracle Page: Received malformed game event structure:', parsedData);
     addEventLog({
       type: 'error',
       eventType: 'unknown',
@@ -116,7 +124,7 @@ export function receiveGameEvent(event: MessageEvent): void {
     return;
   }
 
-  console.log('Oracle Page: Received game event:', parsedData);
+  console.log('Oracle Page: Valid game event received:', parsedData);
   addEventLog({
     type: 'receive',
     eventType: parsedData.event_type,
@@ -131,6 +139,7 @@ export function receiveGameEvent(event: MessageEvent): void {
  * Sets up the game event listener
  */
 export function setupGameEventListener(): () => void {
+  console.log('Oracle Page: Setting up game event listener');
   const handler = (event: MessageEvent) => receiveGameEvent(event);
   window.addEventListener('message', handler, false);
   
