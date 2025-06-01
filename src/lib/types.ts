@@ -9,12 +9,12 @@ export interface GirthIndexValues {
   oracle_stability_status: string;
 }
 
-export const TAP_SURGE_STATES = [
-  'Flaccid Drizzle',
-  'Steady Pounding',
-  'Frenzied Slapping',
-  'Giga-Surge'
-] as const;
+export const TAP_SURGE_STATES = {
+  'Flaccid Drizzle': { color: '#39ff14', label: 'FLACCID DRIZZLE' },
+  'Steady Pounding': { color: '#ffff00', label: 'STEADY POUNDING' },
+  'Frenzied Slapping': { color: '#ff9900', label: 'FRENZIED SLAPPING' },
+  'Giga-Surge': { color: '#ff3131', label: 'GIGA-SURGE' }
+} as const;
 
 export const LEGION_MORALE_STATES = [
   'On Suicide Watch',
@@ -22,5 +22,5 @@ export const LEGION_MORALE_STATES = [
   'Ascended and Engorged'
 ] as const;
 
-export type TapSurgeState = typeof TAP_SURGE_STATES[number];
+export type TapSurgeState = keyof typeof TAP_SURGE_STATES;
 export type LegionMoraleState = typeof LEGION_MORALE_STATES[number];
