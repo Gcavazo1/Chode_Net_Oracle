@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Scroll, Sparkles } from 'lucide-react';
 import { useProphecyStore } from '../../lib/prophecyStore';
 import { useGirthIndexStore } from '../../lib/girthIndexStore';
-import { supabase } from '../../lib/supabase';
 import { PixelBorder, PixelText, PixelLoading } from '../PixelArt/PixelBorder';
 import './ProphecyChamber.css';
 
@@ -18,8 +17,10 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
   const {
     latestProphecy,
     isLoading: prophecyLoading,
+    isGenerating,
     error: prophecyError,
-    setupRealtimeSubscription
+    setupRealtimeSubscription,
+    generateProphecy
   } = useProphecyStore();
 
   const {
@@ -30,37 +31,22 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
     isLoading: metricsLoading
   } = useGirthIndexStore();
 
-  const [isGenerating, setIsGenerating] = useState(false);
-
   useEffect(() => {
     setupRealtimeSubscription();
   }, [setupRealtimeSubscription]);
 
-  const generateProphecy = async () => {
+  const handleGenerateProphecy = async () => {
     try {
-      setIsGenerating(true);
-
-      const payload = {
-        metrics: {
-          girth_resonance: girthResonance,
-          tap_surge_index: tapSurgeIndex,
-          legion_morale: legionMorale,
-          oracle_stability_status: stabilityStatus
-        },
-        ritual_request_topic: currentTopic
-      };
-
-      const { error } = await supabase.functions.invoke('oracle-prophecy-generator', {
-        body: payload
-      });
-
-      if (error) throw error;
+      await generateProphecy({
+        girthResonance,
+        tapSurgeIndex,
+        legionMorale,
+        stabilityStatus
+      }, currentTopic);
 
       onProphecyReceived();
     } catch (error) {
       console.error('Failed to generate prophecy:', error);
-    } finally {
-      setIsGenerating(false);
     }
   };
 
@@ -68,7 +54,7 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
     return (
       <div className="prophecy-chamber">
         <div className="prophecy-header">
-          <Scroll className="scroll-icon\" size={32} />
+          <Scroll className="scroll-icon" size={32} />
           <h2><PixelText>CHANNELING THE ORACLE...</PixelText></h2>
           <Scroll className="scroll-icon" size={32} />
         </div>
@@ -108,7 +94,7 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
 
       <button 
         className={`summon-button ${isGenerating ? 'generating' : ''}`}
-        onClick={generateProphecy}
+        onClick={handleGenerateProphecy}
         disabled={isGenerating}
       >
         <Sparkles className="sparkle-icon" size={24} />
