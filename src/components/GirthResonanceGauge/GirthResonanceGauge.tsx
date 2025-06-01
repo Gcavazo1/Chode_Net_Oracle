@@ -35,9 +35,10 @@ export const GirthResonanceGauge: React.FC<GirthResonanceGaugeProps> = ({ value 
     ctx.lineWidth = 20;
     ctx.stroke();
     
-    // Draw gauge background arc
-    const startAngle = Math.PI * 0.8;
-    const endAngle = Math.PI * 2.2;
+    // Define gauge angles
+    const startAngle = Math.PI * 0.75; // Start at -135 degrees
+    const endAngle = Math.PI * 2.25;   // End at +135 degrees
+    const angleRange = endAngle - startAngle;
     
     // Draw gauge zones
     const drawGaugeZone = (start: number, end: number, color: string) => {
@@ -49,14 +50,15 @@ export const GirthResonanceGauge: React.FC<GirthResonanceGaugeProps> = ({ value 
     };
     
     // Critical zones
-    drawGaugeZone(startAngle, startAngle + (endAngle - startAngle) * 0.25, 'rgba(255, 49, 49, 0.7)'); // Red zone
-    drawGaugeZone(startAngle + (endAngle - startAngle) * 0.25, startAngle + (endAngle - startAngle) * 0.5, 'rgba(255, 165, 0, 0.7)'); // Orange zone
-    drawGaugeZone(startAngle + (endAngle - startAngle) * 0.5, startAngle + (endAngle - startAngle) * 0.75, 'rgba(255, 210, 0, 0.7)'); // Yellow zone
-    drawGaugeZone(startAngle + (endAngle - startAngle) * 0.75, endAngle, 'rgba(57, 255, 20, 0.7)'); // Green zone
+    drawGaugeZone(startAngle, startAngle + angleRange * 0.25, 'rgba(255, 49, 49, 0.7)'); // Red zone
+    drawGaugeZone(startAngle + angleRange * 0.25, startAngle + angleRange * 0.5, 'rgba(255, 165, 0, 0.7)'); // Orange zone
+    drawGaugeZone(startAngle + angleRange * 0.5, startAngle + angleRange * 0.75, 'rgba(255, 210, 0, 0.7)'); // Yellow zone
+    drawGaugeZone(startAngle + angleRange * 0.75, endAngle, 'rgba(57, 255, 20, 0.7)'); // Green zone
+    
+    // Calculate needle angle based on value
+    const valueAngle = startAngle + (angleRange * (value / 100));
     
     // Draw value arc
-    const valueAngle = startAngle + (endAngle - startAngle) * (value / 100);
-    
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, startAngle, valueAngle);
     ctx.strokeStyle = '#00f0ff';
@@ -99,7 +101,7 @@ export const GirthResonanceGauge: React.FC<GirthResonanceGaugeProps> = ({ value 
     ctx.restore();
     
     // Draw value text
-    ctx.font = 'bold 32px "Courier New", monospace';
+    ctx.font = 'bold 32px "Share Tech Mono", monospace';
     ctx.fillStyle = '#00f0ff';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
@@ -107,6 +109,44 @@ export const GirthResonanceGauge: React.FC<GirthResonanceGaugeProps> = ({ value 
     ctx.shadowBlur = 8;
     ctx.fillText(`${value}%`, centerX, centerY + 60);
     ctx.shadowBlur = 0;
+    
+    // Draw tick marks
+    const drawTicks = () => {
+      const tickCount = 10;
+      const tickLength = 10;
+      
+      for (let i = 0; i <= tickCount; i++) {
+        const tickAngle = startAngle + (angleRange * (i / tickCount));
+        const tickStartRadius = radius - 20;
+        const tickEndRadius = tickStartRadius - tickLength;
+        
+        ctx.beginPath();
+        ctx.moveTo(
+          centerX + Math.cos(tickAngle) * tickStartRadius,
+          centerY + Math.sin(tickAngle) * tickStartRadius
+        );
+        ctx.lineTo(
+          centerX + Math.cos(tickAngle) * tickEndRadius,
+          centerY + Math.sin(tickAngle) * tickEndRadius
+        );
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Draw tick labels
+        const labelRadius = tickEndRadius - 15;
+        const labelValue = i * 10;
+        ctx.font = '12px "Share Tech Mono", monospace';
+        ctx.fillStyle = '#888';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const labelX = centerX + Math.cos(tickAngle) * labelRadius;
+        const labelY = centerY + Math.sin(tickAngle) * labelRadius;
+        ctx.fillText(labelValue.toString(), labelX, labelY);
+      }
+    };
+    
+    drawTicks();
     
   }, [value]);
   
