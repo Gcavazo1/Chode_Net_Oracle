@@ -128,7 +128,7 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
       console.log('ProphecyStore: Generating new prophecy:', { metrics, topic });
 
       // Set generating state to true immediately
-      set({ isGenerating: true });
+      set({ isGenerating: true, error: null });
 
       // Transform metrics into the expected payload format
       const payload = {
@@ -155,17 +155,36 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
         prophecies: [tempProphecy, ...state.prophecies]
       }));
 
-      const { error } = await supabase.functions.invoke('oracle-prophecy-generator', {
+      const { data, error } = await supabase.functions.invoke('oracle-prophecy-generator', {
         body: payload
       });
 
       if (error) {
+        console.error('ProphecyStore: Edge Function error:', error);
+        set({ 
+          isGenerating: false,
+          error: error.message || 'Failed to generate prophecy'
+        });
         throw error;
       }
 
-      // Note: We don't need to manually update the prophecy here
+      console.log('ProphecyStore: Edge Function response:', data);
+
       // The realtime subscription will handle updating the UI when the new
-      // prophecy is inserted into the database
+      // prophecy is inserted into the database. If no update is received within
+      // 10 seconds, we'll reset the generating state.
+      setTimeout(() => {
+        set((state) => {
+          if (state.isGenerating) {
+            return {
+              isGenerating: false,
+              error: 'Prophecy generation timed out. Please try again.'
+            };
+          }
+          return state;
+        });
+      }, 10000);
+
     } catch (error) {
       console.error('ProphecyStore: Failed to generate prophecy:', error);
       set({ 
