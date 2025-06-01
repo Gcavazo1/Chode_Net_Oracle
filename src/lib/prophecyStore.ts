@@ -29,15 +29,18 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
   unreadCount: 0,
 
   setupRealtimeSubscription: async () => {
+    console.log('Setting up prophecy realtime subscription...');
     try {
       // Initial fetch of recent prophecies
       const { data: initialProphecies, error: fetchError } = await supabase
         .from('apocryphal_scrolls')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(20);
 
       if (fetchError) throw fetchError;
+
+      console.log('Initial prophecies fetched:', initialProphecies?.length);
 
       set({
         prophecies: initialProphecies || [],
@@ -56,12 +59,16 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
             table: 'apocryphal_scrolls'
           },
           (payload) => {
+            console.log('New prophecy received via realtime:', payload.new);
             const newProphecy = payload.new as Prophecy;
             
-            set((state) => ({
-              prophecies: [newProphecy, ...state.prophecies],
-              latestProphecy: newProphecy
-            }));
+            set((state) => {
+              console.log('Updating state with new prophecy, current count:', state.prophecies.length);
+              return {
+                prophecies: [newProphecy, ...state.prophecies],
+                latestProphecy: newProphecy
+              };
+            });
 
             // Increment unread count and notify game
             get().incrementUnreadCount();
@@ -72,16 +79,20 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
               gameFrame.contentWindow.postMessage({
                 event: 'oracle_update_unread_count',
                 count: get().unreadCount
-              }, '*'); // Replace '*' with actual game origin in production
+              }, '*');
             }
           }
         )
         .subscribe();
 
+      console.log('Realtime subscription established');
+
       return () => {
+        console.log('Cleaning up prophecy subscription');
         subscription.unsubscribe();
       };
     } catch (error) {
+      console.error('Error in prophecy subscription setup:', error);
       set({ 
         error: error instanceof Error ? error.message : 'Unknown error',
         isLoading: false 

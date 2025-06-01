@@ -7,14 +7,21 @@ export const ApocryphalScrolls: React.FC = () => {
   const { prophecies, isLoading, error, setupRealtimeSubscription } = useProphecyStore();
 
   useEffect(() => {
+    console.log('ApocryphalScrolls: Setting up subscription');
     setupRealtimeSubscription();
   }, [setupRealtimeSubscription]);
+
+  useEffect(() => {
+    console.log('Current prophecies:', prophecies.length);
+  }, [prophecies]);
 
   if (isLoading) {
     return (
       <div className="apocryphal-scrolls">
         <div className="scrolls-header">
+          <Scroll className="header-icon" size={24} />
           <h2>LOADING SACRED ARCHIVES...</h2>
+          <Scroll className="header-icon" size={24} />
         </div>
       </div>
     );
@@ -24,9 +31,26 @@ export const ApocryphalScrolls: React.FC = () => {
     return (
       <div className="apocryphal-scrolls">
         <div className="scrolls-header">
+          <AlertTriangle className="header-icon" size={24} />
           <h2>ARCHIVE ACCESS ERROR</h2>
+          <AlertTriangle className="header-icon" size={24} />
         </div>
         <div className="scrolls-error">{error}</div>
+      </div>
+    );
+  }
+
+  if (!prophecies.length) {
+    return (
+      <div className="apocryphal-scrolls">
+        <div className="scrolls-header">
+          <Scroll className="header-icon" size={24} />
+          <h2>SACRED ARCHIVES</h2>
+          <Scroll className="header-icon" size={24} />
+        </div>
+        <div className="scrolls-empty">
+          No prophecies have been recorded yet...
+        </div>
       </div>
     );
   }

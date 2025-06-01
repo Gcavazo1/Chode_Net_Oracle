@@ -38,7 +38,7 @@
 }
 
 .scrolls-container {
-  max-height: 400px;
+  max-height: 600px;
   overflow-y: auto;
   padding-right: 0.5rem;
 }
@@ -99,6 +99,20 @@
 .corruption-indicator {
   color: var(--corruption-color, #ff3131);
   animation: pulse-warning 2s infinite;
+}
+
+.scrolls-empty {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-style: italic;
+}
+
+.scrolls-error {
+  text-align: center;
+  padding: 2rem;
+  color: #ff3131;
+  font-family: "Courier New", monospace;
 }
 
 @keyframes pulse-warning {
