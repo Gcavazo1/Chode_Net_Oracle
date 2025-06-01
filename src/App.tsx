@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Monitor } from 'lucide-react';
 import { Dashboard } from './components/Dashboard/Dashboard';
 import { ProphecyChamber } from './components/ProphecyChamber/ProphecyChamber';
@@ -152,4 +152,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
