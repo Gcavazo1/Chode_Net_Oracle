@@ -40,7 +40,7 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
       if (data) {
         set({
           girthResonance: data.divine_girth_resonance,
-          tapSurgeIndex: TAP_SURGE_STATES.indexOf(data.tap_surge_index),
+          tapSurgeIndex: Math.max(0, TAP_SURGE_STATES.indexOf(data.tap_surge_index)),
           legionMorale: parseInt(data.legion_morale),
           stabilityStatus: data.oracle_stability_status as StabilityStatus,
           isLoading: false
@@ -62,7 +62,7 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
             const newData = payload.new as GirthIndexValues;
             set({
               girthResonance: newData.divine_girth_resonance,
-              tapSurgeIndex: TAP_SURGE_STATES.indexOf(newData.tap_surge_index),
+              tapSurgeIndex: Math.max(0, TAP_SURGE_STATES.indexOf(newData.tap_surge_index)),
               legionMorale: parseInt(newData.legion_morale),
               stabilityStatus: newData.oracle_stability_status as StabilityStatus
             });
@@ -110,7 +110,7 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
       if (data) {
         set({
           girthResonance: data.divine_girth_resonance,
-          tapSurgeIndex: TAP_SURGE_STATES.indexOf(data.tap_surge_index),
+          tapSurgeIndex: Math.max(0, TAP_SURGE_STATES.indexOf(data.tap_surge_index)),
           legionMorale: parseInt(data.legion_morale),
           stabilityStatus: data.oracle_stability_status as StabilityStatus
         });
