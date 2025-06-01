@@ -93,9 +93,9 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
 
       // Update Supabase
       const { error } = await supabase
-        .functions.invoke('admin-update-girth-index', {
-          body: updates
-        });
+        .from('girth_index_current_values')
+        .update(updates)
+        .eq('id', 1);
 
       if (error) throw error;
     } catch (error) {
