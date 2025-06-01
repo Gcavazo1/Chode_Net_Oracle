@@ -5,6 +5,7 @@ export interface GameEvent {
   event_type: string;
   session_id: string;
   event_payload?: Record<string, unknown>;
+  timestamp_utc?: string;
 }
 
 /**
@@ -14,8 +15,14 @@ async function forwardEventToSupabase(gameEventData: GameEvent): Promise<void> {
   const addEventLog = useDebugStore.getState().addEventLog;
 
   try {
-    const { data, error } = await supabase.functions.invoke('ingest-chode-event', {
-      body: gameEventData
+    // Add UTC timestamp if not provided
+    const eventWithTimestamp = {
+      ...gameEventData,
+      timestamp_utc: gameEventData.timestamp_utc || new Date().toISOString()
+    };
+
+    const { error } = await supabase.functions.invoke('ingest-chode-event', {
+      body: eventWithTimestamp
     });
 
     if (error) {
@@ -55,7 +62,8 @@ function isValidGameEvent(data: unknown): data is GameEvent {
   return (
     typeof event.event_type === 'string' &&
     typeof event.session_id === 'string' &&
-    (event.event_payload === undefined || typeof event.event_payload === 'object')
+    (event.event_payload === undefined || typeof event.event_payload === 'object') &&
+    (event.timestamp_utc === undefined || typeof event.timestamp_utc === 'string')
   );
 }
 
@@ -65,11 +73,11 @@ function isValidGameEvent(data: unknown): data is GameEvent {
 export function receiveGameEvent(event: MessageEvent): void {
   const addEventLog = useDebugStore.getState().addEventLog;
 
-  // TODO: Replace with actual game origin when deployed
+  // Whitelist of allowed origins
   const ALLOWED_ORIGINS = [
-    'http://localhost:5173', // Local development
-    'http://localhost:3000',
-    'https://chode-tapper-demo.netlify.app' // Example production URL
+    'http://localhost:5173',  // Local development
+    'http://localhost:3000',  // Alternative local port
+    'https://chode-tapper-demo.netlify.app'  // Production URL
   ];
 
   // Verify origin
@@ -108,7 +116,7 @@ export function receiveGameEvent(event: MessageEvent): void {
     return;
   }
 
-  console.log('Oracle Page: Received game event from iframe:', parsedData);
+  console.log('Oracle Page: Received game event:', parsedData);
   addEventLog({
     type: 'receive',
     eventType: parsedData.event_type,
