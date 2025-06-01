@@ -5,6 +5,7 @@ import { ProphecyChamber } from './components/ProphecyChamber/ProphecyChamber';
 import { ApocryphalScrolls } from './components/ApocryphalScrolls/ApocryphalScrolls';
 import { RitualRequests } from './components/RitualRequests/RitualRequests';
 import { DeveloperPanel } from './components/DeveloperPanel/DeveloperPanel';
+import { DebugPanel } from './components/DebugPanel/DebugPanel';
 import { setupGameEventListener } from './lib/gameEventHandler';
 import './App.css';
 
@@ -178,6 +179,8 @@ function App() {
           SECURE CONNECTION ESTABLISHED
         </div>
       </footer>
+
+      <DebugPanel />
     </div>
   );
 }
