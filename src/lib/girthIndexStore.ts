@@ -91,11 +91,10 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
       // Update local state immediately for responsiveness
       set({ ...metrics });
 
-      // Update Supabase
-      const { error } = await supabase
-        .functions.invoke('admin-update-girth-index', {
-          body: updates
-        });
+      // Update via Edge Function
+      const { error } = await supabase.functions.invoke('admin-update-girth-index', {
+        body: updates
+      });
 
       if (error) throw error;
     } catch (error) {
