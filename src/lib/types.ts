@@ -1,4 +1,4 @@
-export type StabilityStatus = 'STABLE' | 'UNSTABLE' | 'CRITICAL_CORRUPTION';
+export type StabilityStatus = 'Pristine' | 'Unstable' | 'Critical';
 
 export interface GirthIndexValues {
   id: number;

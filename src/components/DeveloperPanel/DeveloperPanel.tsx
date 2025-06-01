@@ -1,15 +1,15 @@
 import React from 'react';
-import { type StabilityStatus } from '../Dashboard/Dashboard';
+import { type StabilityStatus } from '../../lib/types';
 import './DeveloperPanel.css';
 
 interface DeveloperPanelProps {
   girthResonance: number;
-  tapSurgeIndex: number;
-  legionMorale: number;
+  tapSurgeIndex: string;
+  legionMorale: string;
   stabilityStatus: StabilityStatus;
   onGirthChange: (value: number) => void;
-  onTapSurgeChange: (value: number) => void;
-  onMoraleChange: (value: number) => void;
+  onTapSurgeChange: (value: string) => void;
+  onMoraleChange: (value: string) => void;
   onStabilityChange: (value: StabilityStatus) => void;
 }
 
@@ -54,30 +54,30 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
           <label>Tap Surge Index:</label>
           <div className="button-group">
             <button 
-              className={tapSurgeIndex === 0 ? 'active' : ''} 
-              onClick={() => onTapSurgeChange(0)}
-              style={{ backgroundColor: tapSurgeIndex === 0 ? '#39ff14' : undefined }}
+              className={tapSurgeIndex === 'Flaccid Drizzle' ? 'active' : ''} 
+              onClick={() => onTapSurgeChange('Flaccid Drizzle')}
+              style={{ backgroundColor: tapSurgeIndex === 'Flaccid Drizzle' ? '#39ff14' : undefined }}
             >
               FLACCID DRIZZLE
             </button>
             <button 
-              className={tapSurgeIndex === 1 ? 'active' : ''} 
-              onClick={() => onTapSurgeChange(1)}
-              style={{ backgroundColor: tapSurgeIndex === 1 ? '#ffff00' : undefined }}
+              className={tapSurgeIndex === 'Steady Pounding' ? 'active' : ''} 
+              onClick={() => onTapSurgeChange('Steady Pounding')}
+              style={{ backgroundColor: tapSurgeIndex === 'Steady Pounding' ? '#ffff00' : undefined }}
             >
               STEADY POUNDING
             </button>
             <button 
-              className={tapSurgeIndex === 2 ? 'active' : ''} 
-              onClick={() => onTapSurgeChange(2)}
-              style={{ backgroundColor: tapSurgeIndex === 2 ? '#ff9900' : undefined }}
+              className={tapSurgeIndex === 'Frenzied Slapping' ? 'active' : ''} 
+              onClick={() => onTapSurgeChange('Frenzied Slapping')}
+              style={{ backgroundColor: tapSurgeIndex === 'Frenzied Slapping' ? '#ff9900' : undefined }}
             >
               FRENZIED SLAPPING
             </button>
             <button 
-              className={tapSurgeIndex === 3 ? 'active' : ''} 
-              onClick={() => onTapSurgeChange(3)}
-              style={{ backgroundColor: tapSurgeIndex === 3 ? '#ff3131' : undefined }}
+              className={tapSurgeIndex === 'Giga-Surge' ? 'active' : ''} 
+              onClick={() => onTapSurgeChange('Giga-Surge')}
+              style={{ backgroundColor: tapSurgeIndex === 'Giga-Surge' ? '#ff3131' : undefined }}
             >
               GIGA-SURGE
             </button>
@@ -85,21 +85,29 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
         </div>
         
         <div className="control-group">
-          <label htmlFor="legion-morale">Legion Morale (%): {legionMorale}</label>
-          <div className="slider-container">
-            <input
-              type="range"
-              id="legion-morale"
-              min="0"
-              max="100"
-              value={legionMorale}
-              onChange={(e) => onMoraleChange(parseInt(e.target.value))}
-              className="cyber-slider"
-            />
-            <div className="slider-buttons">
-              <button onClick={() => onMoraleChange(Math.max(0, legionMorale - 10))}>-10</button>
-              <button onClick={() => onMoraleChange(Math.min(100, legionMorale + 10))}>+10</button>
-            </div>
+          <label>Legion Morale:</label>
+          <div className="button-group">
+            <button 
+              className={legionMorale === 'On Suicide Watch' ? 'active' : ''} 
+              onClick={() => onMoraleChange('On Suicide Watch')}
+              style={{ backgroundColor: legionMorale === 'On Suicide Watch' ? '#ff3131' : undefined }}
+            >
+              ON SUICIDE WATCH
+            </button>
+            <button 
+              className={legionMorale === 'Cautiously Optimistic' ? 'active' : ''} 
+              onClick={() => onMoraleChange('Cautiously Optimistic')}
+              style={{ backgroundColor: legionMorale === 'Cautiously Optimistic' ? '#ffff00' : undefined }}
+            >
+              CAUTIOUSLY OPTIMISTIC
+            </button>
+            <button 
+              className={legionMorale === 'Ascended and Engorged' ? 'active' : ''} 
+              onClick={() => onMoraleChange('Ascended and Engorged')}
+              style={{ backgroundColor: legionMorale === 'Ascended and Engorged' ? '#39ff14' : undefined }}
+            >
+              ASCENDED AND ENGORGED
+            </button>
           </div>
         </div>
 
@@ -107,25 +115,25 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
           <label>Oracle System Stability:</label>
           <div className="button-group stability-buttons">
             <button 
-              className={`stability-button ${stabilityStatus === 'STABLE' ? 'active' : ''}`}
-              onClick={() => onStabilityChange('STABLE')}
-              style={{ backgroundColor: stabilityStatus === 'STABLE' ? '#39ff14' : undefined }}
+              className={`stability-button ${stabilityStatus === 'Pristine' ? 'active' : ''}`}
+              onClick={() => onStabilityChange('Pristine')}
+              style={{ backgroundColor: stabilityStatus === 'Pristine' ? '#39ff14' : undefined }}
             >
-              STABLE AS A CHODE STATUE
+              PRISTINE
             </button>
             <button 
-              className={`stability-button ${stabilityStatus === 'UNSTABLE' ? 'active' : ''}`}
-              onClick={() => onStabilityChange('UNSTABLE')}
-              style={{ backgroundColor: stabilityStatus === 'UNSTABLE' ? '#ffff00' : undefined }}
+              className={`stability-button ${stabilityStatus === 'Unstable' ? 'active' : ''}`}
+              onClick={() => onStabilityChange('Unstable')}
+              style={{ backgroundColor: stabilityStatus === 'Unstable' ? '#ffff00' : undefined }}
             >
-              SYSTEM UNSTABLE
+              UNSTABLE
             </button>
             <button 
-              className={`stability-button ${stabilityStatus === 'CRITICAL_CORRUPTION' ? 'active' : ''}`}
-              onClick={() => onStabilityChange('CRITICAL_CORRUPTION')}
-              style={{ backgroundColor: stabilityStatus === 'CRITICAL_CORRUPTION' ? '#ff3131' : undefined }}
+              className={`stability-button ${stabilityStatus === 'Critical' ? 'active' : ''}`}
+              onClick={() => onStabilityChange('Critical')}
+              style={{ backgroundColor: stabilityStatus === 'Critical' ? '#ff3131' : undefined }}
             >
-              CRITICAL CORRUPTION
+              CRITICAL
             </button>
           </div>
         </div>
@@ -133,25 +141,25 @@ export const DeveloperPanel: React.FC<DeveloperPanelProps> = ({
         <div className="preset-buttons">
           <button onClick={() => {
             onGirthChange(10);
-            onTapSurgeChange(0);
-            onMoraleChange(15);
-            onStabilityChange('CRITICAL_CORRUPTION');
+            onTapSurgeChange('Flaccid Drizzle');
+            onMoraleChange('On Suicide Watch');
+            onStabilityChange('Critical');
           }}>
             BEAR MARKET PANIC
           </button>
           <button onClick={() => {
             onGirthChange(50);
-            onTapSurgeChange(1);
-            onMoraleChange(55);
-            onStabilityChange('UNSTABLE');
+            onTapSurgeChange('Steady Pounding');
+            onMoraleChange('Cautiously Optimistic');
+            onStabilityChange('Unstable');
           }}>
             STABLE ACCUMULATION
           </button>
           <button onClick={() => {
             onGirthChange(90);
-            onTapSurgeChange(3);
-            onMoraleChange(95);
-            onStabilityChange('STABLE');
+            onTapSurgeChange('Giga-Surge');
+            onMoraleChange('Ascended and Engorged');
+            onStabilityChange('Pristine');
           }}>
             MAXIMUM ENGORGEMENT
           </button>
