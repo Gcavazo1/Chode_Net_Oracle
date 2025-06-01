@@ -1,31 +1,22 @@
 import React, { useEffect } from 'react';
 import { Scroll, AlertTriangle } from 'lucide-react';
 import { useProphecyStore } from '../../lib/prophecyStore';
+import { PixelBorder, PixelText, PixelDivider } from '../PixelArt/PixelBorder';
 import './ApocryphalScrolls.css';
 
 export const ApocryphalScrolls: React.FC = () => {
   const { prophecies, isLoading, error, setupRealtimeSubscription } = useProphecyStore();
 
   useEffect(() => {
-    console.log('ApocryphalScrolls: Component mounted, setting up subscription');
     setupRealtimeSubscription();
   }, [setupRealtimeSubscription]);
 
-  useEffect(() => {
-    console.log('ApocryphalScrolls: Prophecies updated:', {
-      count: prophecies.length,
-      isLoading,
-      error
-    });
-  }, [prophecies, isLoading, error]);
-
   if (isLoading) {
-    console.log('ApocryphalScrolls: Rendering loading state');
     return (
       <div className="apocryphal-scrolls">
         <div className="scrolls-header">
           <Scroll className="header-icon" size={24} />
-          <h2>LOADING SACRED ARCHIVES...</h2>
+          <h2><PixelText>LOADING SACRED ARCHIVES...</PixelText></h2>
           <Scroll className="header-icon" size={24} />
         </div>
       </div>
@@ -33,12 +24,11 @@ export const ApocryphalScrolls: React.FC = () => {
   }
 
   if (error) {
-    console.error('ApocryphalScrolls: Rendering error state:', error);
     return (
       <div className="apocryphal-scrolls">
         <div className="scrolls-header">
           <AlertTriangle className="header-icon" size={24} />
-          <h2>ARCHIVE ACCESS ERROR</h2>
+          <h2><PixelText>ARCHIVE ACCESS ERROR</PixelText></h2>
           <AlertTriangle className="header-icon" size={24} />
         </div>
         <div className="scrolls-error">{error}</div>
@@ -47,12 +37,11 @@ export const ApocryphalScrolls: React.FC = () => {
   }
 
   if (!prophecies.length) {
-    console.log('ApocryphalScrolls: No prophecies available, showing empty state');
     return (
       <div className="apocryphal-scrolls">
         <div className="scrolls-header">
           <Scroll className="header-icon" size={24} />
-          <h2>SACRED ARCHIVES</h2>
+          <h2><PixelText>SACRED ARCHIVES</PixelText></h2>
           <Scroll className="header-icon" size={24} />
         </div>
         <div className="scrolls-empty">
@@ -62,38 +51,40 @@ export const ApocryphalScrolls: React.FC = () => {
     );
   }
 
-  console.log('ApocryphalScrolls: Rendering prophecies list:', prophecies.length);
   return (
     <div className="apocryphal-scrolls">
       <div className="scrolls-header">
         <Scroll className="header-icon" size={24} />
-        <h2>SACRED ARCHIVES</h2>
+        <h2><PixelText>SACRED ARCHIVES</PixelText></h2>
         <Scroll className="header-icon" size={24} />
       </div>
 
       <div className="scrolls-container">
-        {prophecies.map((prophecy) => {
-          console.log('ApocryphalScrolls: Rendering prophecy:', prophecy.id);
+        {prophecies.map((prophecy, index) => {
+          const isCorrupted = prophecy.corruption_level !== 'none';
           return (
-            <div 
-              key={prophecy.id} 
-              className="prophecy-entry"
-              style={{
-                '--corruption-color': getCorruptionColor(prophecy.corruption_level)
-              } as React.CSSProperties}
-            >
-              <div className="prophecy-timestamp">
-                <span>{new Date(prophecy.created_at).toLocaleString()}</span>
-                {prophecy.corruption_level !== 'none' && (
-                  <div className="corruption-indicator" title={`Corruption Level: ${prophecy.corruption_level}`}>
-                    <AlertTriangle size={16} />
-                  </div>
-                )}
-              </div>
-              <div className="prophecy-content">
-                {prophecy.prophecy_text}
-              </div>
-            </div>
+            <React.Fragment key={prophecy.id}>
+              <PixelBorder 
+                isCorrupted={isCorrupted}
+                className="prophecy-entry"
+                style={{
+                  '--corruption-color': getCorruptionColor(prophecy.corruption_level)
+                } as React.CSSProperties}
+              >
+                <div className="prophecy-timestamp">
+                  <span>{new Date(prophecy.created_at).toLocaleString()}</span>
+                  {prophecy.corruption_level !== 'none' && (
+                    <div className="corruption-indicator" title={`Corruption Level: ${prophecy.corruption_level}`}>
+                      <AlertTriangle size={16} />
+                    </div>
+                  )}
+                </div>
+                <div className="prophecy-content">
+                  {prophecy.prophecy_text}
+                </div>
+              </PixelBorder>
+              {index < prophecies.length - 1 && <PixelDivider />}
+            </React.Fragment>
           );
         })}
       </div>

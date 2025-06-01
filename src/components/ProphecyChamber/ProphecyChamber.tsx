@@ -3,6 +3,7 @@ import { Scroll, Sparkles } from 'lucide-react';
 import { useProphecyStore } from '../../lib/prophecyStore';
 import { useGirthIndexStore } from '../../lib/girthIndexStore';
 import { supabase } from '../../lib/supabase';
+import { PixelBorder, PixelText, PixelLoading } from '../PixelArt/PixelBorder';
 import './ProphecyChamber.css';
 
 interface ProphecyChamberProps {
@@ -55,7 +56,6 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
 
       if (error) throw error;
 
-      // Clear the selected topic
       onProphecyReceived();
     } catch (error) {
       console.error('Failed to generate prophecy:', error);
@@ -68,10 +68,11 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
     return (
       <div className="prophecy-chamber">
         <div className="prophecy-header">
-          <Scroll className="scroll-icon\" size={32} />
-          <h2>CHANNELING THE ORACLE...</h2>
+          <Scroll className="scroll-icon" size={32} />
+          <h2><PixelText>CHANNELING THE ORACLE...</PixelText></h2>
           <Scroll className="scroll-icon" size={32} />
         </div>
+        <PixelLoading />
       </div>
     );
   }
@@ -80,7 +81,7 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
     return (
       <div className="prophecy-chamber">
         <div className="prophecy-header">
-          <h2>ORACLE CONNECTION LOST</h2>
+          <h2><PixelText>ORACLE CONNECTION LOST</PixelText></h2>
         </div>
         <div className="prophecy-error">
           {prophecyError}
@@ -89,11 +90,13 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
     );
   }
 
+  const isCorrupted = latestProphecy?.corruption_level !== 'none';
+
   return (
-    <div className="prophecy-chamber">
+    <PixelBorder isCorrupted={isCorrupted} className="prophecy-chamber">
       <div className="prophecy-header">
         <Scroll className="scroll-icon" size={32} />
-        <h2>THE ORACLE SPEAKS:</h2>
+        <h2><PixelText>THE ORACLE SPEAKS:</PixelText></h2>
         <Scroll className="scroll-icon" size={32} />
       </div>
 
@@ -125,6 +128,6 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
           <span>Ritual Topic Selected</span>
         </div>
       )}
-    </div>
+    </PixelBorder>
   );
 };
