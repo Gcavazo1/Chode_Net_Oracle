@@ -13,7 +13,6 @@ interface ProphecyStore {
   prophecies: Prophecy[];
   latestProphecy: Prophecy | null;
   isLoading: boolean;
-  isGenerating: boolean;
   error: string | null;
   unreadCount: number;
   setupRealtimeSubscription: () => Promise<void>;
@@ -26,7 +25,6 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
   prophecies: [],
   latestProphecy: null,
   isLoading: true,
-  isGenerating: false,
   error: null,
   unreadCount: 0,
 
@@ -89,8 +87,7 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
               });
               return {
                 prophecies: [newProphecy, ...state.prophecies],
-                latestProphecy: newProphecy,
-                isGenerating: false
+                latestProphecy: newProphecy
               };
             });
 
@@ -127,9 +124,6 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
     try {
       console.log('ProphecyStore: Generating new prophecy:', { metrics, topic });
 
-      // Set generating state to true immediately
-      set({ isGenerating: true });
-
       // Transform metrics into the expected payload format
       const payload = {
         girth_resonance_value: metrics.girthResonance,
@@ -141,37 +135,13 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
 
       console.log('ProphecyStore: Formatted payload:', payload);
 
-      // Set an optimistic temporary prophecy
-      const tempProphecy: Prophecy = {
-        id: 'temp-' + Date.now(),
-        created_at: new Date().toISOString(),
-        prophecy_text: 'The Oracle is channeling ancient wisdom...',
-        corruption_level: 'none',
-        source_metrics_snapshot: metrics
-      };
-
-      set((state) => ({
-        latestProphecy: tempProphecy,
-        prophecies: [tempProphecy, ...state.prophecies]
-      }));
-
       const { error } = await supabase.functions.invoke('oracle-prophecy-generator', {
         body: payload
       });
 
-      if (error) {
-        throw error;
-      }
-
-      // Note: We don't need to manually update the prophecy here
-      // The realtime subscription will handle updating the UI when the new
-      // prophecy is inserted into the database
+      if (error) throw error;
     } catch (error) {
       console.error('ProphecyStore: Failed to generate prophecy:', error);
-      set({ 
-        isGenerating: false,
-        error: error instanceof Error ? error.message : 'Failed to generate prophecy'
-      });
       throw error;
     }
   },
