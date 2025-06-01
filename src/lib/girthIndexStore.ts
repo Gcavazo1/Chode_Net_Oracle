@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { supabase } from './supabase';
-import { GirthIndexValues, StabilityStatus } from './types';
+import { GirthIndexValues, StabilityStatus, TAP_SURGE_STATES } from './types';
 
 interface GirthIndexStore {
   girthResonance: number;
