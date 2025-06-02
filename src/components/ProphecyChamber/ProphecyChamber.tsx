@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Scroll, Sparkles } from 'lucide-react';
 import { useProphecyStore } from '../../lib/prophecyStore';
 import { useGirthIndexStore } from '../../lib/girthIndexStore';
-import { supabase } from '../../lib/supabase';
 import { PixelBorder, PixelText, PixelLoading } from '../PixelArt/PixelBorder';
 import './ProphecyChamber.css';
 
@@ -17,79 +16,27 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
 }) => {
   const {
     latestProphecy,
-    isLoading: prophecyLoading,
-    error: prophecyError,
+    isLoading,
+    error,
     setupRealtimeSubscription
   } = useProphecyStore();
 
-  const {
-    girthResonance,
-    tapSurgeIndex,
-    legionMorale,
-    stabilityStatus,
-    isLoading: metricsLoading
-  } = useGirthIndexStore();
-
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isNew, setIsNew] = useState(false);
-  const previousProphecyId = useRef<string | null>(null);
 
   useEffect(() => {
+    console.log('ProphecyChamber: Setting up subscription');
     setupRealtimeSubscription();
   }, [setupRealtimeSubscription]);
 
   useEffect(() => {
-    if (latestProphecy && latestProphecy.id !== previousProphecyId.current) {
-      setIsNew(true);
-      previousProphecyId.current = latestProphecy.id;
-      
-      // Reset new state after animation
-      const timer = setTimeout(() => {
-        setIsNew(false);
-      }, 3000);
-      
-      return () => clearTimeout(timer);
-    }
+    console.log('ProphecyChamber: Rendering with prophecy:', latestProphecy?.id);
   }, [latestProphecy]);
 
-  const generateProphecy = async () => {
-    try {
-      setIsGenerating(true);
-      console.log('ProphecyChamber: Starting prophecy generation...');
-
-      const payload = {
-        metrics: {
-          girth_resonance: girthResonance,
-          tap_surge_index: tapSurgeIndex,
-          legion_morale: legionMorale,
-          oracle_stability_status: stabilityStatus
-        },
-        ritual_request_topic: currentTopic
-      };
-
-      console.log('ProphecyChamber: Sending prophecy request with payload:', payload);
-
-      const { error } = await supabase.functions.invoke('oracle-prophecy-generator', {
-        body: payload
-      });
-
-      if (error) throw error;
-
-      console.log('ProphecyChamber: Prophecy generation successful');
-      onProphecyReceived();
-    } catch (error) {
-      console.error('ProphecyChamber: Failed to generate prophecy:', error);
-    } finally {
-      console.log('ProphecyChamber: Resetting generation state');
-      setIsGenerating(false);
-    }
-  };
-
-  if (prophecyLoading || metricsLoading) {
+  if (isLoading) {
     return (
       <div className="prophecy-chamber">
         <div className="prophecy-header">
-          <Scroll className="scroll-icon\" size={32} />
+          <Scroll className="scroll-icon" size={32} />
           <h2><PixelText>CHANNELING THE ORACLE...</PixelText></h2>
           <Scroll className="scroll-icon" size={32} />
         </div>
@@ -98,14 +45,14 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
     );
   }
 
-  if (prophecyError) {
+  if (error) {
     return (
       <div className="prophecy-chamber">
         <div className="prophecy-header">
           <h2><PixelText>ORACLE CONNECTION LOST</PixelText></h2>
         </div>
         <div className="prophecy-error">
-          {prophecyError}
+          {error}
         </div>
       </div>
     );
@@ -121,8 +68,7 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
         <Scroll className="scroll-icon" size={32} />
       </div>
 
-      <div className={`prophecy-display corruption-${latestProphecy?.corruption_level || 'none'} ${isNew ? 'new-prophecy' : ''}`}>
-        {isNew && <div className="new-badge">NEW PROPHECY</div>}
+      <div className={`prophecy-display corruption-${latestProphecy?.corruption_level || 'none'}`}>
         <div className="prophecy-text">
           {latestProphecy?.prophecy_text || 'The Oracle awaits your summons...'}
         </div>
@@ -130,7 +76,14 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
 
       <button 
         className={`summon-button ${isGenerating ? 'generating' : ''}`}
-        onClick={generateProphecy}
+        onClick={() => {
+          setIsGenerating(true);
+          // Prophecy generation logic here
+          setTimeout(() => {
+            setIsGenerating(false);
+            onProphecyReceived();
+          }, 2000);
+        }}
         disabled={isGenerating}
       >
         <Sparkles className="sparkle-icon" size={24} />

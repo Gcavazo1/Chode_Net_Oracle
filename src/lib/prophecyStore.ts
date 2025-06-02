@@ -18,7 +18,6 @@ interface ProphecyStore {
   setupRealtimeSubscription: () => Promise<void>;
   resetUnreadCount: () => void;
   incrementUnreadCount: () => void;
-  generateProphecy: (metrics: any, topic: string | null) => Promise<void>;
 }
 
 export const useProphecyStore = create<ProphecyStore>((set, get) => ({
@@ -30,6 +29,8 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
 
   setupRealtimeSubscription: async () => {
     try {
+      console.log('ProphecyStore: Initializing Supabase real-time subscription');
+      
       // Initial fetch of recent prophecies
       const { data: initialProphecies, error: fetchError } = await supabase
         .from('apocryphal_scrolls')
@@ -39,6 +40,8 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
 
       if (fetchError) throw fetchError;
 
+      console.log('ProphecyStore: Initial prophecies loaded:', initialProphecies?.length);
+
       set({
         prophecies: initialProphecies || [],
         latestProphecy: initialProphecies?.[0] || null,
@@ -47,7 +50,7 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
 
       // Setup realtime subscription
       const subscription = supabase
-        .channel('prophecy-feed')
+        .channel('prophecy-updates')
         .on(
           'postgres_changes',
           {
@@ -56,18 +59,31 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
             table: 'apocryphal_scrolls'
           },
           (payload) => {
+            console.log('ProphecyStore: New prophecy received:', payload.new);
+            
             const newProphecy = payload.new as Prophecy;
             set((state) => ({
               prophecies: [newProphecy, ...state.prophecies],
               latestProphecy: newProphecy
             }));
             get().incrementUnreadCount();
+
+            // Notify game iframe
+            window.postMessage(
+              { 
+                event: 'oracle_update_unread_count',
+                unreadCount: get().unreadCount 
+              },
+              '*'
+            );
+            console.log('ProphecyStore: Game notification sent, unread count:', get().unreadCount);
           }
         )
         .subscribe();
 
       return () => {
         subscription.unsubscribe();
+        console.log('ProphecyStore: Subscription cleanup performed');
       };
     } catch (error) {
       console.error('ProphecyStore: Error in subscription setup:', error);
@@ -75,29 +91,6 @@ export const useProphecyStore = create<ProphecyStore>((set, get) => ({
         error: error instanceof Error ? error.message : 'Unknown error',
         isLoading: false 
       });
-    }
-  },
-
-  generateProphecy: async (metrics, topic) => {
-    try {
-      const payload = {
-        metrics: {
-          girth_resonance: metrics.girthResonance,
-          tap_surge_index: metrics.tapSurgeIndex,
-          legion_morale: metrics.legionMorale,
-          oracle_stability_status: metrics.stabilityStatus
-        },
-        ritual_request_topic: topic
-      };
-
-      const { error } = await supabase.functions.invoke('oracle-prophecy-generator', {
-        body: payload
-      });
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('ProphecyStore: Failed to generate prophecy:', error);
-      throw error;
     }
   },
 

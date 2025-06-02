@@ -11,16 +11,18 @@ export const ApocryphalScrolls: React.FC = () => {
   const previousPropheciesLength = useRef(prophecies.length);
 
   useEffect(() => {
+    console.log('ApocryphalScrolls: Setting up subscription');
     setupRealtimeSubscription();
   }, [setupRealtimeSubscription]);
 
   useEffect(() => {
+    console.log('ApocryphalScrolls: Rendering with prophecies:', prophecies.length);
+    
     if (prophecies.length > previousPropheciesLength.current) {
       const newIds = new Set(newProphecyIds);
       newIds.add(prophecies[0].id);
       setNewProphecyIds(newIds);
 
-      // Clear highlight after animation
       setTimeout(() => {
         setNewProphecyIds(prev => {
           const updated = new Set(prev);
@@ -29,15 +31,11 @@ export const ApocryphalScrolls: React.FC = () => {
         });
       }, 3000);
 
-      // Smooth scroll to top if user is already at top
-      if (scrollContainerRef.current) {
-        const { scrollTop } = scrollContainerRef.current;
-        if (scrollTop < 50) { // User is near top
-          scrollContainerRef.current.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-          });
-        }
+      if (scrollContainerRef.current?.scrollTop ?? 0 < 50) {
+        scrollContainerRef.current?.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
       }
     }
     previousPropheciesLength.current = prophecies.length;
@@ -47,7 +45,7 @@ export const ApocryphalScrolls: React.FC = () => {
     return (
       <div className="apocryphal-scrolls">
         <div className="scrolls-header">
-          <Scroll className="header-icon\" size={24} />
+          <Scroll className="header-icon" size={24} />
           <h2><PixelText>LOADING SACRED ARCHIVES...</PixelText></h2>
           <Scroll className="header-icon" size={24} />
         </div>
@@ -68,69 +66,32 @@ export const ApocryphalScrolls: React.FC = () => {
     );
   }
 
-  if (!prophecies.length) {
-    return (
-      <div className="apocryphal-scrolls">
-        <div className="scrolls-header">
-          <Scroll className="header-icon" size={24} />
-          <h2><PixelText>SACRED ARCHIVES</PixelText></h2>
-          <Scroll className="header-icon" size={24} />
-        </div>
-        <div className="scrolls-empty">
-          No prophecies have been recorded yet...
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="apocryphal-scrolls">
       <div className="scrolls-header">
-        <Scroll className="scroll-icon" size={24} />
+        <Scroll className="header-icon" size={24} />
         <h2><PixelText>SACRED ARCHIVES</PixelText></h2>
-        <Scroll className="scroll-icon" size={24} />
+        <Scroll className="header-icon" size={24} />
       </div>
 
       <div className="scrolls-container" ref={scrollContainerRef}>
-        {prophecies.map((prophecy, index) => {
-          const isCorrupted = prophecy.corruption_level !== 'none';
-          const isNew = newProphecyIds.has(prophecy.id);
-          
-          return (
-            <React.Fragment key={prophecy.id}>
-              <PixelBorder 
-                isCorrupted={isCorrupted}
-                className={`prophecy-entry ${isNew ? 'new-entry highlight' : ''}`}
-                style={{
-                  '--corruption-color': getCorruptionColor(prophecy.corruption_level)
-                } as React.CSSProperties}
-              >
-                <div className="prophecy-timestamp">
-                  <span>{new Date(prophecy.created_at).toLocaleString()}</span>
-                  {prophecy.corruption_level !== 'none' && (
-                    <div className="corruption-indicator" title={`Corruption Level: ${prophecy.corruption_level}`}>
-                      <AlertTriangle size={16} />
-                    </div>
-                  )}
-                </div>
-                <div className="prophecy-content">
-                  {prophecy.prophecy_text}
-                </div>
-              </PixelBorder>
-              {index < prophecies.length - 1 && <PixelDivider />}
-            </React.Fragment>
-          );
-        })}
+        {prophecies.map((prophecy, index) => (
+          <React.Fragment key={prophecy.id}>
+            <PixelBorder 
+              isCorrupted={prophecy.corruption_level !== 'none'}
+              className={`prophecy-entry ${newProphecyIds.has(prophecy.id) ? 'new-entry highlight' : ''}`}
+            >
+              <div className="prophecy-timestamp">
+                {new Date(prophecy.created_at).toLocaleString()}
+              </div>
+              <div className="prophecy-content">
+                {prophecy.prophecy_text}
+              </div>
+            </PixelBorder>
+            {index < prophecies.length - 1 && <PixelDivider />}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );
-};
-
-const getCorruptionColor = (level: string) => {
-  switch (level) {
-    case 'glitched': return '#00f0ff';
-    case 'cryptic': return '#8a2be2';
-    case 'hostile_fragment': return '#ff3131';
-    default: return '#39ff14';
-  }
 };
