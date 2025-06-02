@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Scroll, Sparkles } from 'lucide-react';
 import { useProphecyStore } from '../../lib/prophecyStore';
 import { useGirthIndexStore } from '../../lib/girthIndexStore';
@@ -31,10 +31,26 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
   } = useGirthIndexStore();
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isNew, setIsNew] = useState(false);
+  const previousProphecyId = useRef<string | null>(null);
 
   useEffect(() => {
     setupRealtimeSubscription();
   }, [setupRealtimeSubscription]);
+
+  useEffect(() => {
+    if (latestProphecy && latestProphecy.id !== previousProphecyId.current) {
+      setIsNew(true);
+      previousProphecyId.current = latestProphecy.id;
+      
+      // Reset new state after animation
+      const timer = setTimeout(() => {
+        setIsNew(false);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [latestProphecy]);
 
   const generateProphecy = async () => {
     try {
@@ -105,7 +121,8 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
         <Scroll className="scroll-icon" size={32} />
       </div>
 
-      <div className={`prophecy-display corruption-${latestProphecy?.corruption_level || 'none'}`}>
+      <div className={`prophecy-display corruption-${latestProphecy?.corruption_level || 'none'} ${isNew ? 'new-prophecy' : ''}`}>
+        {isNew && <div className="new-badge">NEW PROPHECY</div>}
         <div className="prophecy-text">
           {latestProphecy?.prophecy_text || 'The Oracle awaits your summons...'}
         </div>
