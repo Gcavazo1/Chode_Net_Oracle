@@ -2,21 +2,32 @@ import React, { useEffect, useState } from 'react';
 import './LegionMoraleBar.css';
 
 interface LegionMoraleBarProps {
-  value: number; // 0-100
+  value: string;
 }
 
 export const LegionMoraleBar: React.FC<LegionMoraleBarProps> = ({ value }) => {
   const [displayValue, setDisplayValue] = useState(0);
   
+  // Map morale states to numerical values for the progress bar
+  const getMoraleValue = (state: string): number => {
+    switch (state) {
+      case 'On Suicide Watch': return 20;
+      case 'Cautiously Optimistic': return 60;
+      case 'Ascended and Engorged': return 100;
+      default: return 60;
+    }
+  };
+  
   // Animate the value change
   useEffect(() => {
-    if (displayValue !== value) {
+    const targetValue = getMoraleValue(value);
+    if (displayValue !== targetValue) {
       const interval = setInterval(() => {
         setDisplayValue(prev => {
-          if (prev < value) {
-            return Math.min(prev + 1, value);
-          } else if (prev > value) {
-            return Math.max(prev - 1, value);
+          if (prev < targetValue) {
+            return Math.min(prev + 1, targetValue);
+          } else if (prev > targetValue) {
+            return Math.max(prev - 1, targetValue);
           }
           return prev;
         });
@@ -26,10 +37,10 @@ export const LegionMoraleBar: React.FC<LegionMoraleBarProps> = ({ value }) => {
     }
   }, [value, displayValue]);
   
-  // Determine morale state based on value
+  // Determine morale state styling
   const getMoraleState = (val: number) => {
-    if (val < 30) return { text: 'ON SUICIDE WATCH', color: '#ff3131' };
-    if (val < 60) return { text: 'CAUTIOUSLY OPTIMISTIC', color: '#ffff00' };
+    if (val <= 30) return { text: 'ON SUICIDE WATCH', color: '#ff3131' };
+    if (val <= 70) return { text: 'CAUTIOUSLY OPTIMISTIC', color: '#ffff00' };
     return { text: 'ASCENDED AND ENGORGED', color: '#39ff14' };
   };
   
@@ -38,7 +49,7 @@ export const LegionMoraleBar: React.FC<LegionMoraleBarProps> = ({ value }) => {
   // Calculate gradient for the bar
   const getBarGradient = () => {
     const redStop = Math.min(30, displayValue) / 30 * 100;
-    const yellowStop = Math.min(Math.max(0, displayValue - 30), 30) / 30 * 100;
+    const yellowStop = Math.min(Math.max(0, displayValue - 30), 40) / 40 * 100;
     
     return `linear-gradient(to right, 
       #ff3131 0%, 
@@ -70,7 +81,7 @@ export const LegionMoraleBar: React.FC<LegionMoraleBarProps> = ({ value }) => {
           textShadow: `0 0 10px ${moraleState.color}`
         }}
       >
-        {moraleState.text}
+        {value}
       </div>
       
       <div className="morale-scale">
