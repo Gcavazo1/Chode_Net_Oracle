@@ -102,6 +102,8 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
         oracle_stability_status: metrics.stabilityStatus ?? currentState.stabilityStatus
       };
 
+      console.log('GirthIndexStore: Sending metrics update to Edge Function:', updates);
+
       // Update local state immediately for responsiveness
       set({ 
         ...metrics,
@@ -123,6 +125,10 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
         const errorData = await response.json();
         throw new Error(`Edge Function error: ${errorData.message || response.statusText}`);
       }
+
+      const responseData = await response.json();
+      console.log('GirthIndexStore: Metrics update successful:', responseData);
+
     } catch (error) {
       console.error('GirthIndexStore: Error updating metrics:', error);
       
