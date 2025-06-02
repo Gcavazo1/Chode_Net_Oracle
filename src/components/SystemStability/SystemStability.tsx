@@ -55,7 +55,7 @@ export const SystemStability: React.FC<SystemStabilityProps> = ({ status }) => {
         />
         <div className="stability-status" style={{ color: config.color }}>
           {config.icon && (
-            <AlertTriangle className="warning-icon" size={24} />
+            <AlertTriangle className="warning-icon\" size={24} />
           )}
           <span>{config.label}</span>
         </div>
