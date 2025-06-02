@@ -10,24 +10,6 @@
   animation: corruption-flicker 0.1s infinite;
 }
 
-@keyframes corruption-flicker {
-  0% {
-    filter: none;
-  }
-  25% {
-    filter: hue-rotate(45deg) saturate(150%);
-  }
-  50% {
-    filter: hue-rotate(-45deg) saturate(200%);
-  }
-  75% {
-    filter: hue-rotate(90deg) saturate(150%);
-  }
-  100% {
-    filter: none;
-  }
-}
-
 .dashboard {
   background-color: #121212;
   background-image: 
@@ -39,6 +21,48 @@
   padding: 2rem;
   position: relative;
   overflow: hidden;
+}
+
+.dashboard-header {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.data-source-status {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: 'Share Tech Mono', monospace;
+  animation: status-pulse 2s infinite;
+}
+
+.data-source-status.simulated {
+  color: #ff9900;
+  background: rgba(255, 153, 0, 0.1);
+  border: 1px solid rgba(255, 153, 0, 0.3);
+}
+
+.data-source-status.live {
+  color: #39ff14;
+  background: rgba(57, 255, 20, 0.1);
+  border: 1px solid rgba(57, 255, 20, 0.3);
+}
+
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
 }
 
 .metrics-container {
@@ -59,29 +83,12 @@
   align-items: center;
   position: relative;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.metric-box::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    linear-gradient(45deg, transparent 65%, rgba(0, 240, 255, 0.1) 70%, transparent 75%),
-    linear-gradient(135deg, transparent 65%, rgba(255, 0, 255, 0.1) 70%, transparent 75%);
-  background-size: 200% 200%;
-  animation: glitchBg 8s linear infinite;
-}
-
-@keyframes glitchBg {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 200% 200%;
-  }
+.metric-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
 }
 
 .metric-title {
@@ -95,7 +102,20 @@
   z-index: 1;
 }
 
-/* Responsive adjustments */
+.dashboard-footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 240, 255, 0.2);
+  text-align: center;
+}
+
+.timestamp {
+  color: #888;
+  font-size: 0.9rem;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 1px;
+}
+
 @media (max-width: 768px) {
   .dashboard {
     padding: 1rem;
@@ -104,5 +124,11 @@
   .metrics-container {
     grid-template-columns: 1fr;
     gap: 1.5rem;
+  }
+
+  .data-source-status {
+    position: relative;
+    margin-top: 1rem;
+    justify-content: center;
   }
 }

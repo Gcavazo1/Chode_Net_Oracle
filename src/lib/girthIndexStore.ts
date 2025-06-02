@@ -7,6 +7,8 @@ interface GirthIndexStore {
   tapSurgeIndex: string;
   legionMorale: string;
   stabilityStatus: StabilityStatus;
+  lastUpdated: string;
+  isSimulated: boolean;
   isLoading: boolean;
   error: string | null;
   setupRealtimeSubscription: () => Promise<void>;
@@ -23,6 +25,8 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
   tapSurgeIndex: 'Steady Pounding',
   legionMorale: 'Cautiously Optimistic',
   stabilityStatus: 'Pristine',
+  lastUpdated: new Date().toISOString(),
+  isSimulated: true,
   isLoading: true,
   error: null,
 
@@ -39,21 +43,16 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
 
       if (error) throw error;
 
-      console.log('GirthIndexStore: Initial Girth Index fetched:', data);
-
       if (data) {
-        const oldState = get();
-        console.log('GirthIndexStore: Updating store with initial data. Old state:', oldState);
-        
         set({
           girthResonance: data.divine_girth_resonance,
           tapSurgeIndex: data.tap_surge_index,
           legionMorale: data.legion_morale,
           stabilityStatus: data.oracle_stability_status as StabilityStatus,
+          lastUpdated: data.last_updated,
+          isSimulated: false,
           isLoading: false
         });
-
-        console.log('GirthIndexStore: Store updated with initial data:', get());
       }
 
       // Setup realtime subscription
@@ -68,37 +67,20 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
             filter: 'id=eq.1'
           },
           (payload) => {
-            console.log('GirthIndexStore: Realtime UPDATE for Girth Index received:', payload.new);
-            
             const newData = payload.new as GirthIndexValues;
-            const oldState = get();
-            
-            console.log('GirthIndexStore: Updating store with new Girth Index.', {
-              oldState,
-              newValues: {
-                girthResonance: newData.divine_girth_resonance,
-                tapSurgeIndex: newData.tap_surge_index,
-                legionMorale: newData.legion_morale,
-                stabilityStatus: newData.oracle_stability_status
-              }
-            });
-
             set({
               girthResonance: newData.divine_girth_resonance,
               tapSurgeIndex: newData.tap_surge_index,
               legionMorale: newData.legion_morale,
-              stabilityStatus: newData.oracle_stability_status as StabilityStatus
+              stabilityStatus: newData.oracle_stability_status as StabilityStatus,
+              lastUpdated: newData.last_updated,
+              isSimulated: false
             });
-
-            console.log('GirthIndexStore: Store updated with new data:', get());
           }
         )
-        .subscribe((status) => {
-          console.log('GirthIndexStore: Subscription status:', status);
-        });
+        .subscribe();
 
       return () => {
-        console.log('GirthIndexStore: Cleaning up subscription');
         subscription.unsubscribe();
       };
     } catch (error) {
@@ -112,8 +94,6 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
 
   updateMetrics: async (metrics) => {
     try {
-      console.log('DevPanel: Updating metrics via Edge Function:', metrics);
-      
       const currentState = get();
       const updates = {
         divine_girth_resonance: metrics.girthResonance ?? currentState.girthResonance,
@@ -123,9 +103,12 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
       };
 
       // Update local state immediately for responsiveness
-      set({ ...metrics });
+      set({ 
+        ...metrics,
+        lastUpdated: new Date().toISOString(),
+        isSimulated: true 
+      });
 
-      // Call the Edge Function directly using fetch
       const response = await fetch('https://errgidlsmozmfnsoyxvw.supabase.co/functions/v1/admin-update-girth-index', {
         method: 'POST',
         headers: {
@@ -140,11 +123,8 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
         const errorData = await response.json();
         throw new Error(`Edge Function error: ${errorData.message || response.statusText}`);
       }
-
-      const data = await response.json();
-      console.info('DevPanel: Girth Index successfully updated via Edge Function:', data);
     } catch (error) {
-      console.error('DevPanel: Error updating Girth Index via Edge Function:', error);
+      console.error('GirthIndexStore: Error updating metrics:', error);
       
       // Revert to previous state on error
       const { data } = await supabase
@@ -154,12 +134,13 @@ export const useGirthIndexStore = create<GirthIndexStore>((set, get) => ({
         .single();
 
       if (data) {
-        console.log('DevPanel: Reverting to previous state after error:', data);
         set({
           girthResonance: data.divine_girth_resonance,
           tapSurgeIndex: data.tap_surge_index,
           legionMorale: data.legion_morale,
-          stabilityStatus: data.oracle_stability_status as StabilityStatus
+          stabilityStatus: data.oracle_stability_status as StabilityStatus,
+          lastUpdated: data.last_updated,
+          isSimulated: false
         });
       }
     }

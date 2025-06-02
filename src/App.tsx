@@ -20,19 +20,19 @@ function App() {
     tapSurgeIndex,
     legionMorale,
     stabilityStatus,
+    lastUpdated,
+    isSimulated,
     isLoading,
     error,
     setupRealtimeSubscription,
     updateMetrics
   } = useGirthIndexStore();
 
-  // Set up game event listener
   useEffect(() => {
     const cleanup = setupGameEventListener();
     return cleanup;
   }, []);
 
-  // Set up Supabase realtime subscription
   useEffect(() => {
     setupRealtimeSubscription();
   }, [setupRealtimeSubscription]);
@@ -115,6 +115,8 @@ function App() {
               tapSurgeIndex={tapSurgeIndex}
               legionMorale={legionMorale}
               stabilityStatus={stabilityStatus}
+              lastUpdated={lastUpdated}
+              isSimulated={isSimulated}
             />
           </section>
         </div>
@@ -148,4 +150,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
