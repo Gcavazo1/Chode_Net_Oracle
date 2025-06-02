@@ -39,6 +39,7 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
   const generateProphecy = async () => {
     try {
       setIsGenerating(true);
+      console.log('ProphecyChamber: Starting prophecy generation...');
 
       const payload = {
         metrics: {
@@ -50,16 +51,20 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
         ritual_request_topic: currentTopic
       };
 
+      console.log('ProphecyChamber: Sending prophecy request with payload:', payload);
+
       const { error } = await supabase.functions.invoke('oracle-prophecy-generator', {
         body: payload
       });
 
       if (error) throw error;
 
+      console.log('ProphecyChamber: Prophecy generation successful');
       onProphecyReceived();
     } catch (error) {
-      console.error('Failed to generate prophecy:', error);
+      console.error('ProphecyChamber: Failed to generate prophecy:', error);
     } finally {
+      console.log('ProphecyChamber: Resetting generation state');
       setIsGenerating(false);
     }
   };
@@ -68,7 +73,7 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
     return (
       <div className="prophecy-chamber">
         <div className="prophecy-header">
-          <Scroll className="scroll-icon\" size={32} />
+          <Scroll className="scroll-icon" size={32} />
           <h2><PixelText>CHANNELING THE ORACLE...</PixelText></h2>
           <Scroll className="scroll-icon" size={32} />
         </div>
