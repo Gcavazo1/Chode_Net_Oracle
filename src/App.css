@@ -87,6 +87,13 @@ body {
   margin: 0 auto;
 }
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: start;
+}
+
 .top-panel {
   background: rgba(18, 18, 18, 0.95);
   border: 2px solid #00f0ff;
@@ -185,7 +192,12 @@ body {
   50% { opacity: 0.3; }
 }
 
-/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1024px) {
   .app-main {
     padding: 1rem;
