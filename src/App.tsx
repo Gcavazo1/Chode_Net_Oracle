@@ -6,7 +6,6 @@ import { ApocryphalScrolls } from './components/ApocryphalScrolls/ApocryphalScro
 import { RitualRequests } from './components/RitualRequests/RitualRequests';
 import { DeveloperPanel } from './components/DeveloperPanel/DeveloperPanel';
 import { DebugPanel } from './components/DebugPanel/DebugPanel';
-import { TokenInfoPanel } from './components/TokenInfoPanel/TokenInfoPanel';
 import { setupGameEventListener } from './lib/gameEventHandler';
 import { useGirthIndexStore } from './lib/girthIndexStore';
 import './App.css';
@@ -21,19 +20,19 @@ function App() {
     tapSurgeIndex,
     legionMorale,
     stabilityStatus,
-    lastUpdated,
-    isSimulated,
     isLoading,
     error,
     setupRealtimeSubscription,
     updateMetrics
   } = useGirthIndexStore();
 
+  // Set up game event listener
   useEffect(() => {
     const cleanup = setupGameEventListener();
     return cleanup;
   }, []);
 
+  // Set up Supabase realtime subscription
   useEffect(() => {
     setupRealtimeSubscription();
   }, [setupRealtimeSubscription]);
@@ -102,30 +101,22 @@ function App() {
             </div>
           </section>
 
-          <div className="game-container">
-            <iframe
-              src="https://chode-tapper-demo.netlify.app"
+          <section className="game-container">
+            <iframe 
+              src="about:blank"
+              title="CHODE Tapper Game"
               className="game-frame"
-              title="CHODE Tapper Demo"
             />
-          </div>
+          </section>
 
-          <div className="dashboard-grid">
-            <section className="bottom-panel">
-              <Dashboard 
-                girthResonance={girthResonance}
-                tapSurgeIndex={tapSurgeIndex}
-                legionMorale={legionMorale}
-                stabilityStatus={stabilityStatus}
-                lastUpdated={lastUpdated}
-                isSimulated={isSimulated}
-              />
-            </section>
-
-            <section className="token-panel">
-              <TokenInfoPanel />
-            </section>
-          </div>
+          <section className="bottom-panel">
+            <Dashboard 
+              girthResonance={girthResonance}
+              tapSurgeIndex={tapSurgeIndex}
+              legionMorale={legionMorale}
+              stabilityStatus={stabilityStatus}
+            />
+          </section>
         </div>
 
         {showDevPanel && (
@@ -157,4 +148,4 @@ function App() {
   );
 }
 
-export default App;
+export default App

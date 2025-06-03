@@ -41,7 +41,6 @@
   max-height: 600px;
   overflow-y: auto;
   padding-right: 0.5rem;
-  scroll-behavior: smooth;
 }
 
 .scrolls-container::-webkit-scrollbar {
@@ -70,37 +69,6 @@
   border-radius: 4px;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.prophecy-entry.new-entry {
-  animation: new-entry-appear 0.5s ease-out;
-}
-
-@keyframes new-entry-appear {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.prophecy-entry.highlight {
-  background: rgba(138, 43, 226, 0.2);
-  border-color: rgba(138, 43, 226, 0.5);
-  animation: highlight-fade 3s forwards;
-}
-
-@keyframes highlight-fade {
-  0% {
-    background: rgba(138, 43, 226, 0.2);
-  }
-  100% {
-    background: rgba(30, 30, 40, 0.8);
-  }
 }
 
 .prophecy-entry::before {

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Activity } from 'lucide-react';
 import { GirthResonanceGauge } from '../GirthResonanceGauge/GirthResonanceGauge';
 import { TapSurgeDisplay } from '../TapSurgeDisplay/TapSurgeDisplay';
 import { LegionMoraleBar } from '../LegionMoraleBar/LegionMoraleBar';
@@ -11,11 +10,9 @@ export type StabilityStatus = 'STABLE' | 'UNSTABLE' | 'CRITICAL_CORRUPTION';
 
 interface DashboardProps {
   girthResonance: number;
-  tapSurgeIndex: string;
-  legionMorale: string;
+  tapSurgeIndex: number;
+  legionMorale: number;
   stabilityStatus: StabilityStatus;
-  lastUpdated: string;
-  isSimulated?: boolean;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -23,21 +20,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
   tapSurgeIndex,
   legionMorale,
   stabilityStatus,
-  lastUpdated,
-  isSimulated = true
 }) => {
-  const formattedTimestamp = new Date(lastUpdated).toLocaleTimeString();
-
   return (
     <div className="dashboard-container">
       <div className="dashboard">
-        <div className="dashboard-header">
-          <GlitchyTitle />
-          <div className={`data-source-status ${isSimulated ? 'simulated' : 'live'}`}>
-            <Activity size={16} />
-            <span>STATUS: {isSimulated ? 'Local Simulation Active' : 'Live Oracle Feed'}</span>
-          </div>
-        </div>
+        <GlitchyTitle />
         
         <div className="metrics-container">
           <div className="metric-box">
@@ -59,10 +46,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
             <h3 className="metric-title">Oracle System Stability</h3>
             <SystemStability status={stabilityStatus} />
           </div>
-        </div>
-
-        <div className="dashboard-footer">
-          <span className="timestamp">Oracle Index Last Updated: {formattedTimestamp}</span>
         </div>
       </div>
     </div>

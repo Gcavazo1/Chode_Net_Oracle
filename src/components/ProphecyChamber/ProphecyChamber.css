@@ -38,98 +38,6 @@
   opacity: 0.5;
 }
 
-.prophecy-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.prophecy-header h2 {
-  color: #b19cd9;
-  font-size: 1.8rem;
-  font-weight: bold;
-  text-align: center;
-  letter-spacing: 2px;
-  text-shadow: 
-    0 0 10px rgba(138, 43, 226, 0.5),
-    0 0 20px rgba(138, 43, 226, 0.3);
-}
-
-.scroll-icon {
-  color: #b19cd9;
-  opacity: 0.8;
-  animation: float 3s ease-in-out infinite;
-}
-
-.prophecy-display {
-  background: rgba(20, 20, 30, 0.8);
-  border: 1px solid rgba(138, 43, 226, 0.3);
-  border-radius: 4px;
-  padding: 2rem;
-  margin: 1rem 0;
-  min-height: 150px;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.prophecy-display.new-prophecy {
-  animation: new-prophecy-flash 1s ease-out;
-}
-
-@keyframes new-prophecy-flash {
-  0% {
-    background: rgba(138, 43, 226, 0.4);
-    transform: scale(1.02);
-  }
-  100% {
-    background: rgba(20, 20, 30, 0.8);
-    transform: scale(1);
-  }
-}
-
-.new-badge {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(138, 43, 226, 0.8);
-  color: white;
-  padding: 0.3rem 0.8rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  animation: fade-out 3s forwards;
-}
-
-@keyframes fade-out {
-  0% { opacity: 1; }
-  70% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.prophecy-text {
-  color: #b19cd9;
-  font-size: 1.4rem;
-  line-height: 1.6;
-  text-align: center;
-  font-family: "Courier New", monospace;
-  letter-spacing: 1px;
-  position: relative;
-  z-index: 1;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: text-appear 0.5s ease-out forwards;
-}
-
-@keyframes text-appear {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Corruption Effects */
 .prophecy-display.corruption-glitched .prophecy-text {
   animation: glitch-text 0.2s infinite;
@@ -216,6 +124,31 @@
   }
 }
 
+.prophecy-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.prophecy-header h2 {
+  color: #b19cd9;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 2px;
+  text-shadow: 
+    0 0 10px rgba(138, 43, 226, 0.5),
+    0 0 20px rgba(138, 43, 226, 0.3);
+}
+
+.scroll-icon {
+  color: #b19cd9;
+  opacity: 0.8;
+  animation: float 3s ease-in-out infinite;
+}
+
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -223,6 +156,17 @@
   50% {
     transform: translateY(-5px);
   }
+}
+
+.prophecy-display {
+  background: rgba(20, 20, 30, 0.8);
+  border: 1px solid rgba(138, 43, 226, 0.3);
+  border-radius: 4px;
+  padding: 2rem;
+  margin: 1rem 0;
+  min-height: 150px;
+  position: relative;
+  overflow: hidden;
 }
 
 .prophecy-display::before {
@@ -249,6 +193,20 @@
   100% {
     background-position: 200% 200%;
   }
+}
+
+.prophecy-text {
+  color: #b19cd9;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  text-align: center;
+  font-family: "Courier New", monospace;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+  text-shadow: 
+    0 0 10px rgba(138, 43, 226, 0.5),
+    0 0 20px rgba(138, 43, 226, 0.3);
 }
 
 .summon-button {

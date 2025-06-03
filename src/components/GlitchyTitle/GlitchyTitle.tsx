@@ -1,21 +1,14 @@
 import React from 'react';
 import './GlitchyTitle.css';
 
-interface GlitchyTitleProps {
-  text: string;
-  className?: string;
-}
-
-export function GlitchyTitle({ text, className = '' }: GlitchyTitleProps) {
+export const GlitchyTitle: React.FC = () => {
   return (
-    <div className={`glitchy-title-container ${className}`}>
+    <div className="title-container">
       <h1 className="glitchy-title">
-        <span aria-hidden="true">{text}</span>
-        {text}
-        <span aria-hidden="true">{text}</span>
+        <span className="glitch-line" data-text="GIRTH INDEX: THE ORACLE SEES ALL">
+          GIRTH INDEX: THE ORACLE SEES ALL
+        </span>
       </h1>
     </div>
   );
-}
-
-export default GlitchyTitle;
+};

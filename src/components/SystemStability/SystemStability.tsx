@@ -1,42 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { type StabilityStatus } from '../Dashboard/Dashboard';
 import { AlertTriangle } from 'lucide-react';
 import './SystemStability.css';
 
 interface SystemStabilityProps {
-  status: 'Pristine' | 'Unstable' | 'Critical';
+  status: StabilityStatus;
 }
 
 export const SystemStability: React.FC<SystemStabilityProps> = ({ status }) => {
-  const [animateChange, setAnimateChange] = useState(false);
-
-  useEffect(() => {
-    setAnimateChange(true);
-    const timer = setTimeout(() => setAnimateChange(false), 1000);
-    return () => clearTimeout(timer);
-  }, [status]);
-
-  const getStatusConfig = (status: string) => {
+  const getStatusConfig = (status: StabilityStatus) => {
     switch (status) {
-      case 'Critical':
+      case 'CRITICAL_CORRUPTION':
         return {
           color: '#ff3131',
-          label: 'CRITICAL',
-          pulseClass: 'pulse-critical',
-          icon: true
+          label: 'CRITICAL CORRUPTION IMMINENT!',
+          pulseClass: 'pulse-critical'
         };
-      case 'Unstable':
+      case 'UNSTABLE':
         return {
           color: '#ffff00',
           label: 'UNSTABLE',
-          pulseClass: 'pulse-warning',
-          icon: true
+          pulseClass: 'pulse-warning'
         };
       default:
         return {
           color: '#39ff14',
-          label: 'PRISTINE',
-          pulseClass: 'pulse-stable',
-          icon: false
+          label: 'STABLE',
+          pulseClass: 'pulse-stable'
         };
     }
   };
@@ -45,19 +35,16 @@ export const SystemStability: React.FC<SystemStabilityProps> = ({ status }) => {
 
   return (
     <div className="stability-container">
-      <div className={`stability-indicator ${config.pulseClass} ${animateChange ? 'animate-change' : ''}`}>
+      <div className={`stability-indicator ${config.pulseClass}`}>
         <div 
           className="stability-bar"
-          style={{ 
-            backgroundColor: config.color,
-            boxShadow: `0 0 20px ${config.color}`
-          }}
+          style={{ backgroundColor: config.color }}
         />
-        <div className="stability-status" style={{ color: config.color }}>
-          {config.icon && (
+        <div className="stability-status">
+          {status === 'CRITICAL_CORRUPTION' && (
             <AlertTriangle className="warning-icon\" size={24} />
           )}
-          <span>{config.label}</span>
+          <span style={{ color: config.color }}>{config.label}</span>
         </div>
       </div>
     </div>

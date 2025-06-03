@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Scroll, Sparkles } from 'lucide-react';
 import { useProphecyStore } from '../../lib/prophecyStore';
 import { useGirthIndexStore } from '../../lib/girthIndexStore';
+import { supabase } from '../../lib/supabase';
 import { PixelBorder, PixelText, PixelLoading } from '../PixelArt/PixelBorder';
 import './ProphecyChamber.css';
 
@@ -16,27 +17,63 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
 }) => {
   const {
     latestProphecy,
-    isLoading,
-    error,
+    isLoading: prophecyLoading,
+    error: prophecyError,
     setupRealtimeSubscription
   } = useProphecyStore();
+
+  const {
+    girthResonance,
+    tapSurgeIndex,
+    legionMorale,
+    stabilityStatus,
+    isLoading: metricsLoading
+  } = useGirthIndexStore();
 
   const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
-    console.log('ProphecyChamber: Setting up subscription');
     setupRealtimeSubscription();
   }, [setupRealtimeSubscription]);
 
-  useEffect(() => {
-    console.log('ProphecyChamber: Rendering with prophecy:', latestProphecy?.id);
-  }, [latestProphecy]);
+  const generateProphecy = async () => {
+    try {
+      setIsGenerating(true);
+      console.log('ProphecyChamber: Starting prophecy generation...');
 
-  if (isLoading) {
+      const payload = {
+        metrics: {
+          girth_resonance: girthResonance,
+          tap_surge_index: tapSurgeIndex,
+          legion_morale: legionMorale,
+          oracle_stability_status: stabilityStatus
+        },
+        ritual_request_topic: currentTopic
+      };
+
+      console.log('ProphecyChamber: Sending prophecy request with payload:', payload);
+
+      const { error } = await supabase.functions.invoke('oracle-prophecy-generator', {
+        body: payload
+      });
+
+      if (error) throw error;
+
+      console.log('ProphecyChamber: Prophecy generation successful');
+      onProphecyReceived();
+    } catch (error) {
+      console.error('ProphecyChamber: Failed to generate prophecy:', error);
+    } finally {
+      console.log('ProphecyChamber: Resetting generation state');
+      setIsGenerating(false);
+    }
+  };
+
+  if (prophecyLoading || metricsLoading) {
     return (
       <div className="prophecy-chamber">
         <div className="prophecy-header">
-          <Scroll className="scroll-icon" size={32} />
+          <Scroll className="scroll-icon\" size={32} />
           <h2><PixelText>CHANNELING THE ORACLE...</PixelText></h2>
           <Scroll className="scroll-icon" size={32} />
         </div>
@@ -45,14 +82,14 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
     );
   }
 
-  if (error) {
+  if (prophecyError) {
     return (
       <div className="prophecy-chamber">
         <div className="prophecy-header">
           <h2><PixelText>ORACLE CONNECTION LOST</PixelText></h2>
         </div>
         <div className="prophecy-error">
-          {error}
+          {prophecyError}
         </div>
       </div>
     );
@@ -76,14 +113,7 @@ export const ProphecyChamber: React.FC<ProphecyChamberProps> = ({
 
       <button 
         className={`summon-button ${isGenerating ? 'generating' : ''}`}
-        onClick={() => {
-          setIsGenerating(true);
-          // Prophecy generation logic here
-          setTimeout(() => {
-            setIsGenerating(false);
-            onProphecyReceived();
-          }, 2000);
-        }}
+        onClick={generateProphecy}
         disabled={isGenerating}
       >
         <Sparkles className="sparkle-icon" size={24} />
