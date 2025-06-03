@@ -102,6 +102,14 @@ function App() {
             </div>
           </section>
 
+          <div className="game-container">
+            <iframe
+              src="https://chode-tapper-demo.netlify.app"
+              className="game-frame"
+              title="CHODE Tapper Demo"
+            />
+          </div>
+
           <div className="dashboard-grid">
             <section className="bottom-panel">
               <Dashboard 

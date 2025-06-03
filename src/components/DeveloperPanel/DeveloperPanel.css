@@ -1,0 +1,123 @@
+.dev-panel {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 400px;
+  background: rgba(18, 18, 18, 0.95);
+  border: 2px solid #ff00ff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 0 20px rgba(255, 0, 255, 0.2),
+    inset 0 0 15px rgba(255, 0, 255, 0.1);
+}
+
+.dev-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 0, 255, 0.3);
+}
+
+.dev-panel-title {
+  color: #ff00ff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+.control-group {
+  margin-bottom: 1.5rem;
+}
+
+.control-label {
+  display: block;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.slider-container {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.slider-input {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #333;
+  border-radius: 2px;
+  outline: none;
+}
+
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #ff00ff;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.slider-input::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+}
+
+.slider-value {
+  position: absolute;
+  top: -1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff00ff;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.select-input {
+  width: 100%;
+  padding: 0.8rem;
+  background: #222;
+  border: 1px solid rgba(255, 0, 255, 0.3);
+  border-radius: 4px;
+  color: #fff;
+  font-family: 'Share Tech Mono', monospace;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.select-input:hover {
+  border-color: rgba(255, 0, 255, 0.5);
+  box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+}
+
+.select-input:focus {
+  outline: none;
+  border-color: #ff00ff;
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
+}
+
+.select-input option {
+  background: #222;
+  color: #fff;
+  padding: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .dev-panel {
+    width: calc(100% - 2rem);
+    bottom: 1rem;
+    right: 1rem;
+  }
+}

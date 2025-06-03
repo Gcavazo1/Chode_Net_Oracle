@@ -1,4 +1,6 @@
 import React from 'react';
+import { Settings, Activity, Users, Shield } from 'lucide-react';
+import './DeveloperPanel.css';
 
 interface DeveloperPanelProps {
   girthResonance: number;
@@ -22,64 +24,77 @@ export function DeveloperPanel({
   onStabilityChange
 }: DeveloperPanelProps) {
   return (
-    <div className="bg-gray-800 p-4 rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold text-white mb-4">Developer Controls</h2>
-      
-      <div className="space-y-4">
-        <div>
-          <label className="block text-white mb-2">Divine Girth Resonance</label>
+    <div className="dev-panel">
+      <div className="dev-panel-header">
+        <Settings className="text-pink-500" size={24} />
+        <h2 className="dev-panel-title">ORACLE CONTROL PANEL</h2>
+      </div>
+
+      <div className="control-group">
+        <label className="control-label">
+          <Activity size={16} className="inline mr-2" />
+          DIVINE GIRTH RESONANCE
+        </label>
+        <div className="slider-container">
           <input
             type="range"
             min="0"
             max="100"
             value={girthResonance}
             onChange={(e) => onGirthChange(Number(e.target.value))}
-            className="w-full"
+            className="slider-input"
           />
-          <span className="text-white">{girthResonance}</span>
+          <span className="slider-value">{girthResonance}%</span>
         </div>
+      </div>
 
-        <div>
-          <label className="block text-white mb-2">Tap Surge Index</label>
-          <select
-            value={tapSurgeIndex}
-            onChange={(e) => onTapSurgeChange(e.target.value)}
-            className="w-full p-2 rounded bg-gray-700 text-white"
-          >
-            <option value="Steady Pounding">Steady Pounding</option>
-            <option value="Rising Tension">Rising Tension</option>
-            <option value="Peak Throbbing">Peak Throbbing</option>
-            <option value="Post-Surge Clarity">Post-Surge Clarity</option>
-          </select>
-        </div>
+      <div className="control-group">
+        <label className="control-label">
+          <Activity size={16} className="inline mr-2" />
+          TAP SURGE INDEX
+        </label>
+        <select
+          value={tapSurgeIndex}
+          onChange={(e) => onTapSurgeChange(e.target.value)}
+          className="select-input"
+        >
+          <option value="Flaccid Drizzle">FLACCID DRIZZLE</option>
+          <option value="Steady Pounding">STEADY POUNDING</option>
+          <option value="Frenzied Slapping">FRENZIED SLAPPING</option>
+          <option value="Giga-Surge">GIGA-SURGE</option>
+        </select>
+      </div>
 
-        <div>
-          <label className="block text-white mb-2">Legion Morale</label>
-          <select
-            value={legionMorale}
-            onChange={(e) => onMoraleChange(e.target.value)}
-            className="w-full p-2 rounded bg-gray-700 text-white"
-          >
-            <option value="Cautiously Optimistic">Cautiously Optimistic</option>
-            <option value="Absolutely Pumped">Absolutely Pumped</option>
-            <option value="Slightly Concerned">Slightly Concerned</option>
-            <option value="Total Despair">Total Despair</option>
-          </select>
-        </div>
+      <div className="control-group">
+        <label className="control-label">
+          <Users size={16} className="inline mr-2" />
+          LEGION MORALE
+        </label>
+        <select
+          value={legionMorale}
+          onChange={(e) => onMoraleChange(e.target.value)}
+          className="select-input"
+        >
+          <option value="On Suicide Watch">ON SUICIDE WATCH</option>
+          <option value="Cautiously Optimistic">CAUTIOUSLY OPTIMISTIC</option>
+          <option value="Ascended and Engorged">ASCENDED AND ENGORGED</option>
+        </select>
+      </div>
 
-        <div>
-          <label className="block text-white mb-2">Oracle Stability</label>
-          <select
-            value={stabilityStatus}
-            onChange={(e) => onStabilityChange(e.target.value)}
-            className="w-full p-2 rounded bg-gray-700 text-white"
-          >
-            <option value="Pristine">Pristine</option>
-            <option value="Slightly Corrupted">Slightly Corrupted</option>
-            <option value="Heavily Corrupted">Heavily Corrupted</option>
-            <option value="Complete Chaos">Complete Chaos</option>
-          </select>
-        </div>
+      <div className="control-group">
+        <label className="control-label">
+          <Shield size={16} className="inline mr-2" />
+          ORACLE STABILITY
+        </label>
+        <select
+          value={stabilityStatus}
+          onChange={(e) => onStabilityChange(e.target.value)}
+          className="select-input"
+        >
+          <option value="Pristine">PRISTINE</option>
+          <option value="Unstable">UNSTABLE</option>
+          <option value="Critical">CRITICAL</option>
+        </select>
       </div>
     </div>
   );
