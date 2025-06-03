@@ -1,0 +1,9 @@
+.debug-panel {
+  border: 1px solid rgba(74, 222, 128, 0.2);
+  backdrop-filter: blur(4px);
+}
+
+.debug-item {
+  padding: 0.5rem;
+  border-bottom: 1px solid rgba(74, 222, 128, 0.1);
+}
