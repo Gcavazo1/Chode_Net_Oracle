@@ -45,7 +45,7 @@ export const ApocryphalScrolls: React.FC = () => {
     return (
       <div className="apocryphal-scrolls">
         <div className="scrolls-header">
-          <Scroll className="header-icon\" size={24} />
+          <Scroll className="header-icon" size={24} />
           <h2><PixelText>LOADING SACRED ARCHIVES...</PixelText></h2>
           <Scroll className="header-icon" size={24} />
         </div>
